@@ -1,0 +1,30 @@
+{
+  "name": "cairn-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Root tooling for the Cairn monorepo (husky + lint-staged + commitlint). Application code lives in memory/.",
+  "scripts": {
+    "prepare": "husky",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "memory/**/*.{ts,tsx,js,jsx,json,css,md}": [
+      "prettier --write --ignore-unknown"
+    ],
+    "memory/src-tauri/**/*.rs": [
+      "rustfmt --edition 2021"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "husky": "^9.1.6",
+    "lint-staged": "^15.2.10",
+    "prettier": "^3.3.3"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.12.0"
+}

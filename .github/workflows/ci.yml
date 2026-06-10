@@ -1,0 +1,209 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  # Hard gate: a migration file that's already shipped in any v* tag may not
+  # be edited, renamed, or deleted — sqlx detects the checksum mismatch on the
+  # user's next launch and refuses to open their DB. The Nextagent → Cairn
+  # rename hit exactly this trap and forced every alpha-1 user to wipe; this
+  # job turns that lesson into a CI failure instead of a user incident.
+  migrations-immutable:
+    name: Migrations · immutable since last release
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # need tags + full history for the diff
+
+      - name: Compare migrations/ against last release tag
+        run: |
+          set -euo pipefail
+
+          # Use the highest-versioned v* tag as the immutability baseline.
+          # `-v:refname` is git's version-aware refname sort — orders
+          # v0.1.0-alpha.1 < v0.1.0 < v0.2.0 correctly, even when tags are
+          # created out of order (hotfix on an older line after a newer
+          # release). `creatordate` would mis-order those.
+          # If no release exists yet (first-ever push), there's nothing to
+          # protect — exit clean so the very first release CI doesn't block.
+          BASE=$(git tag --list 'v*' --sort=-v:refname | head -1)
+          if [ -z "$BASE" ]; then
+            echo "No v* tag yet — skipping immutability check."
+            exit 0
+          fi
+          echo "Baseline: $BASE"
+
+          # Belt-and-suspenders content-hash gate. We walk every blob
+          # `$BASE` had under migrations/ and assert HEAD still has the same
+          # blob at the same path. This is strictly stronger than
+          # `git diff --diff-filter=MDRT`:
+          #   - Modified / type-changed → blob hash differs → caught.
+          #   - Deleted → `git ls-tree HEAD -- <path>` empty → caught.
+          #   - Renamed → `<path>` missing at HEAD → caught (even when
+          #     git's similarity detector misses it and reports D+A).
+          #   - The "logical rename" trick (delete the file, re-add the
+          #     same content under a different version slug in the same PR)
+          #     is also caught: the original path is gone from HEAD.
+          # Added migrations (new versions) are by definition not in the
+          # $BASE tree, so they never enter this loop.
+          fail=0
+          while IFS=$'\t' read -r old_hash path; do
+            head_hash=$(git ls-tree HEAD -- "$path" | awk '{print $3}')
+            if [ -z "$head_hash" ]; then
+              echo "::error::Migration $path (shipped in $BASE) is missing at HEAD."
+              fail=1
+            elif [ "$head_hash" != "$old_hash" ]; then
+              echo "::error::Migration $path content changed since $BASE ($old_hash → $head_hash)."
+              fail=1
+            fi
+          done < <(git ls-tree -r "$BASE" -- memory/src-tauri/migrations/ \
+                     | awk '{print $3"\t"$4}')
+
+          if [ "$fail" = "1" ]; then
+            echo ""
+            echo "--- diff stat for diagnostic context ---"
+            git diff --stat "$BASE"..HEAD -- memory/src-tauri/migrations/ || true
+            echo ""
+            echo "Migration .sql files are immutable once a release ships."
+            echo "sqlx records their checksums in each user's DB and will refuse"
+            echo "to open the DB on the next launch if a single byte changes."
+            echo "Add a NEW migration (sqlx migrate add -r <slug>) instead."
+            exit 1
+          fi
+          echo "Migrations untouched since $BASE."
+
+  frontend:
+    name: Frontend · typecheck + lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: memory
+    steps:
+      - uses: actions/checkout@v4
+
+      # pnpm version is sourced from the root package.json `packageManager`
+      # field (Corepack-style). Don't pin `version:` here too — action-setup
+      # errors out on the duplicate.
+      - uses: pnpm/action-setup@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: pnpm
+          cache-dependency-path: memory/pnpm-lock.yaml
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm exec tsc --noEmit
+
+      - name: Lint
+        run: pnpm lint
+
+  rust:
+    name: Rust core · fmt + clippy + check
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: memory/src-tauri
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need tags + history so the upgrade smoke test below can extract
+          # the previous release's migrations dir.
+          fetch-depth: 0
+
+      - name: Install Tauri system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libsoup-3.0-dev \
+            libjavascriptcoregtk-4.1-dev \
+            librsvg2-dev \
+            libssl-dev \
+            libayatana-appindicator3-dev \
+            pkg-config \
+            build-essential
+
+      - name: Stub frontend dist
+        # Override the job's default `working-directory: memory/src-tauri`
+        # so the stub lands at the repo-root path `memory/out/` that
+        # `tauri.conf.json` references via `frontendDist: "../out"`.
+        working-directory: ${{ github.workspace }}
+        run: |
+          # tauri-build validates `frontendDist` exists at compile time.
+          # The Rust job doesn't need a real Next.js build — a stub is enough
+          # to let `cargo check` / `clippy` / `test` run without invoking pnpm.
+          mkdir -p memory/out
+          echo '<!doctype html><title>cairn-stub</title>' > memory/out/index.html
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: memory/src-tauri
+
+      - name: cargo fmt
+        run: cargo fmt --all -- --check
+
+      - name: cargo check
+        run: cargo check --all-targets --locked
+
+      - name: cargo clippy
+        run: cargo clippy --all-targets --locked -- -D warnings
+
+      - name: cargo test (workspace, no upgrade env)
+        # Run the regular suite first, with no upgrade-test env set. Keeping
+        # the env out of this step prevents an unrelated test from ever
+        # depending on its presence (we'd never notice the dependency
+        # locally, only in CI).
+        run: cargo test --locked
+        env:
+          RUST_BACKTRACE: 1
+
+      - name: Stage previous-release migrations for upgrade smoke test
+        # Extract the highest-versioned v* tag's migrations dir to a temp path
+        # and surface it via the dedicated env var the upgrade test reads.
+        # If no tag exists (very first CI run) we leave the var unset and the
+        # next step's test self-skips.
+        id: stage-upgrade
+        working-directory: ${{ github.workspace }}
+        run: |
+          set -euo pipefail
+          BASE=$(git tag --list 'v*' --sort=-v:refname | head -1)
+          if [ -z "$BASE" ]; then
+            echo "No v* tag yet — upgrade smoke test will self-skip."
+            echo "old_migrations=" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          DEST=$(mktemp -d)
+          git archive "$BASE" memory/src-tauri/migrations | tar -x -C "$DEST"
+          echo "old_migrations=$DEST/memory/src-tauri/migrations" >> "$GITHUB_OUTPUT"
+          echo "Staged migrations from $BASE → $DEST"
+
+      - name: cargo test --test upgrade (with prev-release fixture)
+        # Env is scoped to *this step only* so the var is namespaced (no
+        # collision with anything else) and isolated from the workspace
+        # cargo test above. Empty value → the test self-skips, which is
+        # exactly what we want when there's no baseline tag yet.
+        run: cargo test --locked --test upgrade -- --nocapture
+        env:
+          RUST_BACKTRACE: 1
+          CAIRN_UPGRADE_OLD_MIGRATIONS_DIR: ${{ steps.stage-upgrade.outputs.old_migrations }}

@@ -1,0 +1,53 @@
+version: 2
+updates:
+  # npm / pnpm (Next.js UI)
+  - package-ecosystem: "npm"
+    directory: "/memory"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Shanghai"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "frontend"]
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      next-and-react:
+        patterns: ["next", "next-*", "react", "react-*", "@types/react*"]
+      tauri-js:
+        patterns: ["@tauri-apps/*"]
+      tooling:
+        patterns: ["typescript", "eslint*", "@typescript-eslint/*", "prettier"]
+
+  # Cargo (Rust core)
+  - package-ecosystem: "cargo"
+    directory: "/memory/src-tauri"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Asia/Shanghai"
+    open-pull-requests-limit: 5
+    labels: ["dependencies", "rust"]
+    commit-message:
+      prefix: "chore"
+      include: "scope"
+    groups:
+      tauri-rust:
+        patterns: ["tauri", "tauri-*"]
+      tokio-stack:
+        patterns: ["tokio", "tokio-*", "futures*", "async-trait"]
+      sqlx-stack:
+        patterns: ["sqlx", "sqlx-*", "libsqlite3-sys", "sqlite-vec"]
+
+  # GitHub Actions workflows
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels: ["dependencies", "ci"]
+    commit-message:
+      prefix: "chore"
+      include: "scope"

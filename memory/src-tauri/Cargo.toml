@@ -1,0 +1,139 @@
+[package]
+name = "cairn"
+version = "0.1.0"
+description = "Cairn — Personal Memory / Context OS. Mark where you've been; read by every agent."
+authors = ["Cairn"]
+edition = "2021"
+rust-version = "1.77"
+default-run = "cairn"
+license = "LicenseRef-FSL-1.1-ALv2"
+
+[lib]
+name = "cairn_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[[bin]]
+name = "cairn"
+path = "src/main.rs"
+
+# Standalone MCP server binary (invoked by Claude Desktop / Cursor / any MCP host)
+[[bin]]
+name = "cairn-mcp"
+path = "src/bin/mcp_stdio.rs"
+
+# Plaintext → encrypted SQLite migration. The real implementation needs
+# `--features encrypted` (SQLCipher); without it the binary still builds
+# but prints an instructive error and exits, so Tauri's bundler can find
+# the file in release builds without us vendoring SQLCipher on every CI
+# run.
+[[bin]]
+name = "cairn-migrate"
+path = "src/bin/migrate.rs"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["macos-private-api"] }
+tauri-plugin-shell = "2"
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-clipboard-manager = "2"
+
+# async + http
+tokio = { version = "1.41", features = ["full"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls", "stream"], default-features = false }
+futures = "0.3"
+async-trait = "0.1"
+
+# serde
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# db
+sqlx = { version = "0.8", features = ["runtime-tokio-rustls", "sqlite", "macros", "chrono", "migrate"] }
+libsqlite3-sys = { version = "0.30", features = ["bundled"] }
+sqlite-vec = "0.1"
+
+# ids + time
+ulid = { version = "1.1", features = ["serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+
+# crypto for audit log
+sha2 = "0.10"
+ed25519-dalek = { version = "2.1", features = ["rand_core", "pkcs8", "pem"] }
+rand = "0.8"
+hex = "0.4"
+base64 = "0.22"
+
+# error handling
+anyhow = "1"
+thiserror = "2"
+
+# logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+
+# config
+directories = "5"
+dotenvy = "0.15"
+
+# json schema validation (for LLM output)
+jsonschema = "0.26"
+
+# Phase 7 V6: import dev-tool memory files (YAML frontmatter parsing)
+serde_yaml = "0.9"
+walkdir = "2.5"
+
+# Phase 7 V6 M3: filesystem watcher so ~/.claude memory changes auto-import
+# without the user clicking Apply.
+notify = "6"
+notify-debouncer-mini = "0.4"
+
+# OS keychain (Phase 3a)
+keyring = { version = "3.6", features = ["apple-native", "linux-native", "windows-native"] }
+
+# Embedding adapter loading (Phase 4d)
+safetensors = "0.4"
+
+# Capture surfaces (Phase 5)
+async-imap = { version = "0.10", default-features = false, features = ["runtime-tokio"] }
+tokio-rustls = { version = "0.26" }
+rustls = { version = "0.23", default-features = false, features = ["std", "tls12"] }
+rustls-pki-types = "1"
+webpki-roots = "0.26"
+icalendar = "0.17"
+mail-parser = "0.9"
+axum = { version = "0.7", features = ["http1", "json", "tokio", "query"], default-features = false }
+tower-http = { version = "0.6", features = ["cors"] }
+tokio-stream = "0.1"
+
+# misc (must stay above any `[target.*]` blocks — TOML table headers
+# scope all following keys until the next header)
+once_cell = "1.20"
+parking_lot = "0.12"
+
+# Native message dialog for fatal startup errors (e.g. a migration conflict),
+# so a Finder-launched GUI user sees *something* instead of a silent crash.
+rfd = "0.15"
+
+# Selection popover (Phase 6a) — macOS Accessibility + CGEventTap
+[target.'cfg(target_os = "macos")'.dependencies]
+accessibility-sys = "0.1"
+core-foundation = "0.10"
+core-graphics = "0.24"
+objc2 = "0.5"
+objc2-foundation = { version = "0.2", features = ["NSString", "NSArray", "NSDictionary"] }
+objc2-app-kit = { version = "0.2", features = ["NSRunningApplication", "NSWorkspace", "NSPasteboard", "NSEvent", "NSScreen", "libc"] }
+libc = "0.2"
+
+[dev-dependencies]
+tempfile = "3.10"
+
+[features]
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
+# Phase 3b: at-rest encryption via SQLCipher.
+# Builds a vendored SQLCipher (which vendors OpenSSL — adds ~10 min to first
+# `cargo build`). Once compiled the binary supports CAIRN_ENCRYPT=1.
+# `cairn-mcp` and the GUI must be built with the same feature set.
+encrypted = ["libsqlite3-sys/bundled-sqlcipher-vendored-openssl"]

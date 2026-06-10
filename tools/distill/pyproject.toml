@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cairn-distill"
+version = "0.1.0"
+description = "On-device extraction model distillation toolkit for Cairn Memory"
+requires-python = ">=3.11,<3.13"
+authors = [{ name = "Cairn" }]
+readme = "README.md"
+license = { text = "LicenseRef-FSL-1.1-ALv2" }
+
+dependencies = [
+  "torch>=2.5.0",
+  "transformers>=4.46.0",
+  "peft>=0.13.0",
+  "accelerate>=1.1.0",
+  "datasets>=3.0.0",
+  "bitsandbytes>=0.44.0; sys_platform != 'darwin'",
+  "jsonschema>=4.23.0",
+  "pydantic>=2.9.0",
+  "click>=8.1.7",
+  "rich>=13.9.0",
+  "tqdm>=4.66.0",
+  "httpx[http2]>=0.27.0",
+  "tenacity>=9.0.0",
+  "orjson>=3.10.0",
+  "safetensors>=0.4.5",
+]
+
+[project.optional-dependencies]
+mlx = [
+  "mlx>=0.20.0; sys_platform == 'darwin'",
+  "mlx-lm>=0.20.0; sys_platform == 'darwin'",
+]
+dev = [
+  "pytest>=8.3.0",
+  "pytest-asyncio>=0.24.0",
+  "ruff>=0.7.0",
+  "mypy>=1.13.0",
+]
+
+[project.scripts]
+distill-synth        = "distill.synth:main"
+distill-train        = "distill.train:main"
+distill-eval         = "distill.eval:main"
+distill-export       = "distill.export:main"
+distill-embed-finetune = "distill.embed_finetune:main"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+packages = ["distill"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"

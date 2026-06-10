@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security vulnerability
+    url: https://github.com/mutouwilson/cairn/security/advisories/new
+    about: Please use private security advisories for vulnerability reports, not public issues. See SECURITY.md for details.
+  - name: Question / discussion
+    url: https://github.com/mutouwilson/cairn/discussions
+    about: Use Discussions for general questions, ideas, and show-and-tell.

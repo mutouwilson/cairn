@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cairn Settings</title>
+    <link rel="stylesheet" href="./options.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Cairn Extension</h1>
+        <p class="lede">Routes your local Cairn memory into web AI chats. Talks to a Cairn instance on your machine over HTTP.</p>
+      </header>
+
+      <section>
+        <h2>Cairn endpoint</h2>
+        <label>
+          <span class="lbl">Local API URL</span>
+          <input id="cairn-url" placeholder="http://127.0.0.1:7716" />
+        </label>
+        <label>
+          <span class="lbl">Auth token <em>(optional)</em></span>
+          <input id="cairn-token" type="password" autocomplete="off" placeholder="empty unless Cairn was started with CAIRN_API_TOKEN" />
+        </label>
+        <p class="muted">Default port <code>7716</code> is always-on. If your Cairn is older it might still be on <code>7717</code>; the extension auto-falls-back. The auth token is only needed if you launched Cairn with <code>CAIRN_API_TOKEN=…</code>.</p>
+        <button id="test-conn" type="button">test connection</button>
+        <span id="conn-status" class="status"></span>
+      </section>
+
+      <section>
+        <h2>Recall</h2>
+        <label class="checkbox">
+          <input type="checkbox" id="passive-recall" />
+          <span><strong>Passive mode</strong> — show a small badge when relevant memories are found while you type (recommended). Disable to require <code>@cairn</code>.</span>
+        </label>
+        <label>
+          <span class="lbl">Slash prefix (always-on fast path)</span>
+          <input id="slash-prefix" placeholder="@cairn" />
+        </label>
+        <p class="muted">Even with passive mode on, typing the prefix at the start of the composer opens the picker immediately. <code>@cairn 投资人</code></p>
+        <label class="checkbox">
+          <input type="checkbox" id="inject-prefix" />
+          <span>Inject matches as a <code>&lt;cairn-context&gt;</code> prefix before your message (recommended)</span>
+        </label>
+      </section>
+
+      <section>
+        <h2>Enabled sites</h2>
+        <p class="muted">Toggle which chat sites get the Cairn UI. Disabled sites keep the right-click menu but skip composer / save-reply injection.</p>
+        <div id="site-list"></div>
+      </section>
+
+      <footer>
+        <button id="save" class="primary" type="button">save changes</button>
+        <span id="save-status" class="status"></span>
+      </footer>
+    </main>
+
+    <script type="module" src="./options.ts"></script>
+  </body>
+</html>

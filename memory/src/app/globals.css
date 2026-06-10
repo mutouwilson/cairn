@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Inter + Inter Tight + Geist Mono — bundled via google-fonts CSS to keep
+   Tauri offline-friendly we use the system fallbacks declared in tailwind
+   config. If the user later vendors webfonts, the @font-face blocks land
+   here. */
+
+:root {
+  color-scheme: light;
+  --r-xl: 12px;
+  --r-2xl: 16px;
+}
+
+html, body {
+  background: theme('colors.ink.50');
+  color: theme('colors.ink.900');
+  font-family: theme('fontFamily.sans');
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'cv11', 'ss01';
+}
+
+::selection {
+  background: theme('colors.accent.dim');
+  color: theme('colors.accent.fg');
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: theme('colors.ink.300') transparent;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: theme('colors.ink.300');
+  border-radius: 4px;
+}
+
+/* Headings use Inter Tight (display) — designs label H1 as 28px tight. */
+h1, h2, h3, .font-display {
+  font-family: theme('fontFamily.display');
+  letter-spacing: -0.01em;
+}
+
+/* Caps eyebrow used by section headings throughout (METADATA, ACCESS …). */
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: theme('colors.ink.500');
+  font-weight: 500;
+}

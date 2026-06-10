@@ -1,0 +1,304 @@
+{
+  "nav": {
+    "home": "Home",
+    "entities": "Entities",
+    "search": "Search",
+    "themes": "Themes",
+    "agents": "Agents",
+    "audit": "Audit",
+    "import": "Import",
+    "usage": "Usage",
+    "settings": "Settings"
+  },
+  "common": {
+    "loading": "loading…",
+    "save": "Save",
+    "saved": "saved",
+    "saving": "saving…",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "copy": "copy",
+    "copied": "copied",
+    "edit": "Edit",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "confirm": "Confirm",
+    "search": "Search",
+    "all": "All",
+    "none": "None",
+    "more": "More",
+    "less": "Less",
+    "open": "Open",
+    "close": "Close",
+    "applied": "Applied",
+    "apply": "Apply",
+    "dismiss": "dismiss",
+    "retry": "Retry",
+    "today": "today",
+    "yesterday": "yesterday",
+    "now": "now",
+    "show_more": "Show more",
+    "show_less": "Show less",
+    "enabled": "enabled",
+    "disabled": "disabled",
+    "live": "live",
+    "stopped": "stopped",
+    "test_connection": "Test connection",
+    "add": "Add",
+    "remove": "Remove",
+    "loading_state": "loading…"
+  },
+  "appbar": {
+    "search_placeholder": "Search memory…",
+    "shortcut_hint": "⌘K"
+  },
+  "home": {
+    "title": "Home",
+    "subtitle": "What Cairn knows about you, and what it just learned.",
+    "eyebrow_capture": "capture",
+    "eyebrow_recent": "recent",
+    "prompt": "What's on your mind?",
+    "audit_status": {
+      "ok": "Audit chain verified",
+      "bad": "Audit chain broken",
+      "checking": "verifying…"
+    },
+    "captured_today": "captured today",
+    "entities_total": "entities",
+    "themes_active": "active themes",
+    "recent": "Recent activity",
+    "no_activity": "no activity yet — capture your first note from the extension or {hotkey}.",
+    "open_in_finder": "Open data folder",
+    "banner": {
+      "title": "No AI provider configured",
+      "body_prefix": "Capture + full-text search work without any AI key. To get structured entities, themes, and vector search, pick a provider in ",
+      "body_link": "Settings",
+      "body_suffix": " — OpenAI, Anthropic, Gemini, Vercel Gateway, OpenRouter, 豆包, Kimi, GLM, Qwen, MiniMax all supported.",
+      "dismiss": "dismiss"
+    }
+  },
+  "entities": {
+    "title": "Top of mind",
+    "subtitle": "People, projects, places, beliefs — sorted by how much they matter right now.",
+    "all": "All",
+    "archived_section": "Archived",
+    "no_entities": "no entities yet — they appear as you capture more notes.",
+    "filter_all_types": "All types",
+    "new_entity": "New entity",
+    "dedup_banner": {
+      "title": "{n} possible duplicates",
+      "subtitle": "review and merge to keep things clean",
+      "cta": "Review"
+    }
+  },
+  "entity": {
+    "back": "Back to entities",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "type_label": "Type",
+    "confidence": "Confidence",
+    "source_note": "Source note",
+    "aliases_title": "Merged from",
+    "history_title": "Edit history",
+    "no_history": "no edits yet",
+    "archive": "Archive",
+    "unarchive": "Unarchive",
+    "delete": "Delete"
+  },
+  "search": {
+    "title": "Search",
+    "placeholder": "Search by name, content, or tag…",
+    "no_results": "No matches.",
+    "filters_label": "Filter:",
+    "filter_all": "All",
+    "filter_entities": "Entities",
+    "filter_notes": "Notes",
+    "examples": "Try a name, a topic, or a phrase you remember."
+  },
+  "themes": {
+    "title": "Themes",
+    "stats": "{n} consolidated · {runs} runs",
+    "subtitle": "Semantic memories — LLM-consolidated summaries of recurring topics across your episodic memory. Refreshed by the background worker; can be triggered manually.",
+    "run_btn": "Run consolidation",
+    "running": "running…",
+    "active_eyebrow": "ACTIVE THEMES",
+    "runs_eyebrow": "CONSOLIDATION RUNS",
+    "no_themes": "no themes yet. capture several related notes (people, preferences, goals) and click",
+    "no_themes_runner_label": "Run consolidation",
+    "no_themes_dot": ".",
+    "no_runs": "no consolidation runs yet."
+  },
+  "agents": {
+    "title": "Agents",
+    "connected": "{n} connected",
+    "revoked": "· {n} revoked",
+    "connect_btn": "Connect agent",
+    "empty": "no agents yet. click {action} to register one.",
+    "form": {
+      "eyebrow": "connect new agent",
+      "id_placeholder": "id (e.g. cursor)",
+      "name_placeholder": "display name",
+      "add": "Add",
+      "cancel": "Cancel"
+    },
+    "row": {
+      "connected": "connected · {when}",
+      "never_connected": "never connected",
+      "revoked": "revoked"
+    },
+    "legend": {
+      "read": "read allowed",
+      "write": "write allowed",
+      "unset": "unset"
+    },
+    "reads_col": "READS"
+  },
+  "audit": {
+    "title": "Audit",
+    "subtitle": "Every read & write, cryptographically chained.",
+    "verify_btn": "Verify chain",
+    "verifying": "verifying…",
+    "ok": "Chain verified — no tampering",
+    "broken": "Chain broken at row {row}",
+    "filters": {
+      "all": "All",
+      "user": "User",
+      "agent": "Agent",
+      "system": "System"
+    },
+    "empty": "no audit entries yet."
+  },
+  "import": {
+    "title": "Import",
+    "subtitle": "Bring in memory from Claude / Cursor / Codex / CLAUDE.md.",
+    "scan_btn": "Scan again",
+    "scanning": "scanning…",
+    "apply_btn": "Apply {n} ready",
+    "applying": "applying…",
+    "no_sources": "No memory files found in known paths.",
+    "select_all": "Select all",
+    "deselect_all": "Deselect all",
+    "preview_loading": "loading preview…",
+    "status": {
+      "dry-run": "ready",
+      "imported": "imported",
+      "skipped": "skipped",
+      "failed": "failed"
+    }
+  },
+  "usage": {
+    "title": "Usage",
+    "subtitle": "Tokens + dollars per call, last 90 days.",
+    "empty": "no usage rows yet — set an AI provider in Settings and capture a note."
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Identity keys, extraction model, providers — and where your data lives.",
+    "data_location": "Cairn lives in ~/Library/Application Support/cairn · v0.1.0",
+    "language": {
+      "eyebrow": "LOCALE",
+      "section_title": "Interface language",
+      "description": "Locale for the Cairn window and migration dialogs. Browser extension follows in a later release.",
+      "opt_auto": "Auto",
+      "opt_zh_cn": "中文",
+      "opt_en": "English",
+      "current_auto": "Current: {locale} · auto-detected from system",
+      "current_manual": "Current: {locale} · set manually"
+    },
+    "identity": {
+      "title": "Identity",
+      "sub": "Your ed25519 keypair · public key signs every audit entry",
+      "public_key": "Public key",
+      "private_key_location": "Private key location",
+      "secure_enclave": "secure enclave"
+    },
+    "extraction": {
+      "title": "Extraction",
+      "sub": "Where entities and embeddings get computed. Leave both unset for BM25-only mode.",
+      "active_extract": "Active model · extraction",
+      "active_embed": "Active model · embeddings",
+      "model": "MODEL",
+      "api_key": "API KEY",
+      "base_url": "BASE URL",
+      "test_btn": "Test connection",
+      "test_ok": "connection ok",
+      "test_fail": "connection failed",
+      "save_btn": "Save",
+      "saved": "saved",
+      "key_paste_hint": "paste your {provider} key"
+    },
+    "selection": {
+      "title": "Selection popover",
+      "sub": "Highlight text in any app → a Cairn pill appears with one-click save. macOS only.",
+      "permission_missing": "Accessibility permission missing",
+      "permission_granted": "Accessibility granted",
+      "macos_only": "macOS only",
+      "open_system_settings": "Open System Settings",
+      "request_permission": "Request permission",
+      "enabled": "enabled",
+      "disabled": "disabled"
+    },
+    "mcp": {
+      "title": "Remote MCP bridge",
+      "sub": "Expose Cairn's MCP server over localhost HTTP/SSE for tunnel-based clients.",
+      "local": "LOCAL",
+      "identify_as": "IDENTIFY AS",
+      "identify_placeholder": "e.g. cursor, windsurf, chatgpt",
+      "no_tag_hint": "no tag — default agent",
+      "tag_hint": "→ ?agent_id={id}",
+      "tunnel_hint_prefix": "Expose the local port with a tunnel:",
+      "connector_hint": "In ChatGPT → New connector: URL = https://<tunnel>/sse, Auth = No authentication. The tunnel URL is the secret."
+    },
+    "maintenance": {
+      "title": "Maintenance",
+      "sub": "Vacuum orphan vector rows + SQLite VACUUM (shrinks disk).",
+      "vacuum_btn": "Vacuum orphan vectors",
+      "vacuuming": "vacuuming…",
+      "armed_btn": "Click again to vacuum",
+      "armed_hint": "May take ~30s on large DBs.",
+      "report_template": "Scanned {before} vec rows; deleted {deleted} orphans (+{meta} meta).",
+      "report_file_template": "File: {before} MB → {after} MB · saved {saved} MB"
+    },
+    "capture": {
+      "title": "Capture sources",
+      "sub": "Background pollers that feed your memory.",
+      "add_imap": "Add IMAP",
+      "add_ics": "Add iCal",
+      "imap_form": {
+        "label": "label (e.g. Gmail personal)",
+        "host": "host",
+        "port": "port",
+        "username": "username (e.g. you@gmail.com)",
+        "password": "app password (stored in OS keychain)",
+        "folder": "folder/label (default Cairn)"
+      },
+      "ics_form": {
+        "label": "label (e.g. Personal Google Calendar)",
+        "url": "https://calendar.google.com/calendar/ical/.../basic.ics"
+      },
+      "no_sources": "no capture sources yet."
+    },
+    "escape": {
+      "title": "Escape hatch — export everything",
+      "sub": "Your data is always yours. One click → a human-readable Markdown bundle, signed by audit-chain timestamp.",
+      "export_btn": "Export {n} entries",
+      "exporting": "exporting…"
+    },
+    "connectors": {
+      "section_title": "Hosted MCP connectors",
+      "section_sub": "Copy-paste snippets to wire each MCP host into Cairn. Status dots come from the agents table — green if the host has talked to Cairn in the last 5 minutes.",
+      "claude_desktop_path": "Drop under mcpServers in ~/Library/Application Support/Claude/claude_desktop_config.json",
+      "cursor_path": "Drop under mcpServers in ~/.cursor/mcp.json",
+      "web_host": "ChatGPT / Claude.ai (web)",
+      "web_path": "Add as \"Custom Connector\" in the host UI. Auth = None.",
+      "web_extra": "Needs a public tunnel — turn on Remote MCP bridge above, run `cloudflared tunnel --url http://localhost:7717`, then replace <your-tunnel> with the tunnel domain.",
+      "status_connected": "connected",
+      "status_last_seen": "last seen {when}",
+      "status_idle": "idle",
+      "status_not_configured": "not configured"
+    }
+  }
+}

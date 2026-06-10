@@ -1,0 +1,65 @@
+name: Feature request
+description: Propose a new capability or improvement.
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion! Please describe the problem first, then the proposed solution. Features that touch the **audit chain**, **permission model**, **storage layout** or **MCP surface** need explicit design review before any code.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve?
+      description: |
+        Describe the user-facing problem, not the implementation.
+        "I want to be able to X, because today I have to Y, which is painful because Z."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: What would the feature look like? Mockups / API sketches welcome.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: Other approaches you ruled out and why.
+
+  - type: dropdown
+    id: touches
+    attributes:
+      label: Does this touch any of the load-bearing surfaces?
+      description: Pick all that apply. (We need extra design review on these.)
+      multiple: true
+      options:
+        - Audit chain (Merkle + Ed25519)
+        - Permission matrix
+        - Storage / migrations
+        - MCP server / protocol
+        - On-device extraction model
+        - Cryptography / keystore
+        - None of the above
+    validations:
+      required: true
+
+  - type: textarea
+    id: scope
+    attributes:
+      label: Out of scope
+      description: What this feature explicitly does NOT include, to keep the discussion focused.
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues for this idea.
+          required: true
+        - label: I have read the [project design pillars](https://github.com/mutouwilson/cairn/blob/main/ARCHITECTURE.md#design-pillars) and this proposal is compatible with them.
+          required: true

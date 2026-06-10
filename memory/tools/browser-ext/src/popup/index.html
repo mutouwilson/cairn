@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cairn</title>
+    <link rel="stylesheet" href="./popup.css" />
+  </head>
+  <body>
+    <header class="head">
+      <span class="badge">cairn</span>
+      <button id="open-options" class="link">settings</button>
+    </header>
+
+    <section class="capture">
+      <textarea id="capture-text" placeholder="quick capture — ⌘+Enter to save"></textarea>
+      <div class="capture-row">
+        <span id="capture-hint" class="hint">⌘+Enter to save · stored locally</span>
+        <button id="capture-btn" class="primary">save</button>
+      </div>
+    </section>
+
+    <!--
+      Discovery hint for the two deeper surfaces. Search lives on the URL
+      bar (omnibox keyword `cairn`); inline recall lives in the chat
+      composer (slash prefix `@cairn`).
+    -->
+    <section class="discovery">
+      <div class="disc-line">
+        <span class="kbd">cairn</span> in URL bar &mdash; search memory inline
+      </div>
+      <div class="disc-line">
+        <span class="kbd">@cairn</span> in any chat &mdash; recall a memory before sending
+      </div>
+    </section>
+
+    <footer class="foot">
+      <span id="conn-status">connecting…</span>
+      <a id="open-cairn" href="#">Open Cairn</a>
+    </footer>
+
+    <script type="module" src="./popup.ts"></script>
+  </body>
+</html>

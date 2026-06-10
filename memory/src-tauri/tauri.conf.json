@@ -1,0 +1,47 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Cairn",
+  "version": "0.1.0",
+  "identifier": "so.cairn.app",
+  "build": {
+    "beforeDevCommand": "pnpm dev",
+    "beforeBuildCommand": "pnpm build",
+    "devUrl": "http://localhost:3000",
+    "frontendDist": "../out"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Cairn",
+        "width": 980,
+        "height": 720,
+        "minWidth": 640,
+        "minHeight": 480,
+        "decorations": true,
+        "transparent": false,
+        "titleBarStyle": "Visible"
+      }
+    ],
+    "security": {
+      "csp": null
+    },
+    "macOSPrivateApi": true
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "category": "Productivity",
+    "shortDescription": "Mark where you've been. Read by every agent.",
+    "longDescription": "Cairn is the personal Memory / Context OS for the Agent era. Capture freely; AI structures every note into typed entities, relations, and themes; expose them to any MCP-capable agent (Claude, ChatGPT, Cursor, …) under a cryptographically auditable permission matrix. Local-first, model-neutral, yours to export.",
+    "macOS": {
+      "signingIdentity": "-"
+    }
+  }
+}

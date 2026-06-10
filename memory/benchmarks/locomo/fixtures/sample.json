@@ -1,0 +1,158 @@
+{
+  "conversation_id": "sample_alice_bob_001",
+  "speakers": ["Alice", "Bob"],
+  "sessions": [
+    {
+      "session_id": "s1",
+      "timestamp": "2024-03-04T19:12:00Z",
+      "turns": [
+        {
+          "turn_id": "s1_t1",
+          "speaker": "Alice",
+          "text": "Hey Bob, I finally adopted that border collie I told you about. Her name is Maple and she's almost two years old.",
+          "timestamp": "2024-03-04T19:12:05Z"
+        },
+        {
+          "turn_id": "s1_t2",
+          "speaker": "Bob",
+          "text": "That's wonderful! Where did you get her from?",
+          "timestamp": "2024-03-04T19:12:32Z"
+        },
+        {
+          "turn_id": "s1_t3",
+          "speaker": "Alice",
+          "text": "From the Riverside Rescue shelter in Brooklyn. They're amazing — I'm thinking of volunteering there on Saturdays.",
+          "timestamp": "2024-03-04T19:13:01Z"
+        },
+        {
+          "turn_id": "s1_t4",
+          "speaker": "Bob",
+          "text": "Border collies need a lot of exercise. Are you and Maple doing alright in the apartment?",
+          "timestamp": "2024-03-04T19:13:40Z"
+        },
+        {
+          "turn_id": "s1_t5",
+          "speaker": "Alice",
+          "text": "Honestly cramped. I'm seriously considering moving to Hoboken so we have room for a yard. The rents are wild though.",
+          "timestamp": "2024-03-04T19:14:11Z"
+        }
+      ]
+    },
+    {
+      "session_id": "s2",
+      "timestamp": "2024-04-21T10:08:00Z",
+      "turns": [
+        {
+          "turn_id": "s2_t1",
+          "speaker": "Bob",
+          "text": "Hey, you mentioned starting volunteering — how's that going?",
+          "timestamp": "2024-04-21T10:08:09Z"
+        },
+        {
+          "turn_id": "s2_t2",
+          "speaker": "Alice",
+          "text": "Started two weeks ago, on April 7th. I walk the senior dogs in the morning shift. It's exhausting but I love it.",
+          "timestamp": "2024-04-21T10:08:45Z"
+        },
+        {
+          "turn_id": "s2_t3",
+          "speaker": "Bob",
+          "text": "Did you ever decide on the Hoboken move?",
+          "timestamp": "2024-04-21T10:09:14Z"
+        },
+        {
+          "turn_id": "s2_t4",
+          "speaker": "Alice",
+          "text": "Yes! I signed a lease on a place on Garden Street. Moving in next month. Maple is going to lose her mind over the yard.",
+          "timestamp": "2024-04-21T10:09:55Z"
+        },
+        {
+          "turn_id": "s2_t5",
+          "speaker": "Bob",
+          "text": "Congrats! Also — I'm flying to Lisbon in June for a conference. Want me to bring you back some pastel de nata?",
+          "timestamp": "2024-04-21T10:10:30Z"
+        }
+      ]
+    },
+    {
+      "session_id": "s3",
+      "timestamp": "2024-06-15T21:42:00Z",
+      "turns": [
+        {
+          "turn_id": "s3_t1",
+          "speaker": "Alice",
+          "text": "How was Lisbon??",
+          "timestamp": "2024-06-15T21:42:08Z"
+        },
+        {
+          "turn_id": "s3_t2",
+          "speaker": "Bob",
+          "text": "Incredible. I gave my talk on retrieval-augmented agents at WebSummit and somehow people actually came. I brought you a box of nata!",
+          "timestamp": "2024-06-15T21:42:55Z"
+        },
+        {
+          "turn_id": "s3_t3",
+          "speaker": "Alice",
+          "text": "You're the best. Drop them off Saturday after my shelter shift?",
+          "timestamp": "2024-06-15T21:43:24Z"
+        },
+        {
+          "turn_id": "s3_t4",
+          "speaker": "Bob",
+          "text": "Deal. How's Maple liking the new yard?",
+          "timestamp": "2024-06-15T21:43:50Z"
+        },
+        {
+          "turn_id": "s3_t5",
+          "speaker": "Alice",
+          "text": "She has fully turned feral. Caught a squirrel yesterday. I'm so proud and horrified.",
+          "timestamp": "2024-06-15T21:44:25Z"
+        }
+      ]
+    }
+  ],
+  "qa": [
+    {
+      "question_id": "q1",
+      "category": "single-hop",
+      "question": "What is the name of Alice's dog?",
+      "answer": "Maple"
+    },
+    {
+      "question_id": "q2",
+      "category": "single-hop",
+      "question": "What breed of dog did Alice adopt?",
+      "answer": "border collie"
+    },
+    {
+      "question_id": "q3",
+      "category": "multi-hop",
+      "question": "Where does Alice volunteer and what city did she move to?",
+      "answer": "Riverside Rescue shelter in Brooklyn; Hoboken"
+    },
+    {
+      "question_id": "q4",
+      "category": "temporal",
+      "question": "When did Alice start volunteering at the shelter?",
+      "answer": "April 7th, 2024"
+    },
+    {
+      "question_id": "q5",
+      "category": "temporal",
+      "question": "How many months passed between Alice adopting Maple and her moving to Hoboken?",
+      "answer": "about two months"
+    },
+    {
+      "question_id": "q6",
+      "category": "open-domain",
+      "question": "What kind of pastry did Bob bring back from Lisbon, and what is it made of?",
+      "answer": "pastel de nata; a Portuguese egg custard tart in flaky pastry"
+    },
+    {
+      "question_id": "q7",
+      "category": "adversarial",
+      "question": "What is the name of Bob's cat?",
+      "answer": "Not mentioned in the conversation."
+    }
+  ]
+}

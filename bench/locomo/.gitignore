@@ -1,0 +1,7 @@
+.venv/
+data/locomo/
+data/*.json
+results/
+!data/.gitkeep
+!results/.gitkeep
+.env

@@ -1,0 +1,304 @@
+{
+  "nav": {
+    "home": "首页",
+    "entities": "实体",
+    "search": "搜索",
+    "themes": "主题",
+    "agents": "Agents",
+    "audit": "审计",
+    "import": "导入",
+    "usage": "用量",
+    "settings": "设置"
+  },
+  "common": {
+    "loading": "加载中…",
+    "save": "保存",
+    "saved": "已保存",
+    "saving": "保存中…",
+    "cancel": "取消",
+    "delete": "删除",
+    "copy": "复制",
+    "copied": "已复制",
+    "edit": "编辑",
+    "back": "返回",
+    "yes": "是",
+    "no": "否",
+    "ok": "好",
+    "confirm": "确认",
+    "search": "搜索",
+    "all": "全部",
+    "none": "无",
+    "more": "更多",
+    "less": "收起",
+    "open": "打开",
+    "close": "关闭",
+    "applied": "已应用",
+    "apply": "应用",
+    "dismiss": "忽略",
+    "retry": "重试",
+    "today": "今天",
+    "yesterday": "昨天",
+    "now": "刚刚",
+    "show_more": "展开全文",
+    "show_less": "收起",
+    "enabled": "已启用",
+    "disabled": "已关闭",
+    "live": "在线",
+    "stopped": "已停止",
+    "test_connection": "测试连接",
+    "add": "添加",
+    "remove": "移除",
+    "loading_state": "加载中…"
+  },
+  "appbar": {
+    "search_placeholder": "搜索你的记忆…",
+    "shortcut_hint": "⌘K"
+  },
+  "home": {
+    "title": "首页",
+    "subtitle": "Cairn 知道关于你的事，以及它刚学到的。",
+    "eyebrow_capture": "捕获",
+    "eyebrow_recent": "近期",
+    "prompt": "在想什么？",
+    "audit_status": {
+      "ok": "审计链已校验",
+      "bad": "审计链断裂",
+      "checking": "校验中…"
+    },
+    "captured_today": "今日已捕获",
+    "entities_total": "实体",
+    "themes_active": "活跃主题",
+    "recent": "近期动态",
+    "no_activity": "还没有活动——通过扩展或 {hotkey} 捕获第一条笔记。",
+    "open_in_finder": "打开数据目录",
+    "banner": {
+      "title": "尚未配置 AI Provider",
+      "body_prefix": "不配 AI key 也能捕获和全文搜索。要拿到结构化实体、主题与向量搜索，请在 ",
+      "body_link": "设置",
+      "body_suffix": " 里选一个 Provider —— OpenAI / Anthropic / Gemini / Vercel Gateway / OpenRouter / 豆包 / Kimi / GLM / Qwen / MiniMax 均已支持。",
+      "dismiss": "忽略"
+    }
+  },
+  "entities": {
+    "title": "脑中常驻",
+    "subtitle": "人、项目、地点、信念——按当下重要程度排序。",
+    "all": "全部",
+    "archived_section": "归档",
+    "no_entities": "还没有实体——多写几条笔记之后它们会自动出现。",
+    "filter_all_types": "全部类型",
+    "new_entity": "新建实体",
+    "dedup_banner": {
+      "title": "{n} 个可能重复",
+      "subtitle": "审核并合并，保持脑中清晰",
+      "cta": "审核"
+    }
+  },
+  "entity": {
+    "back": "返回实体列表",
+    "edit": "编辑",
+    "save": "保存",
+    "cancel": "取消",
+    "type_label": "类型",
+    "confidence": "置信度",
+    "source_note": "来源笔记",
+    "aliases_title": "合并自",
+    "history_title": "编辑历史",
+    "no_history": "暂无编辑记录",
+    "archive": "归档",
+    "unarchive": "取消归档",
+    "delete": "删除"
+  },
+  "search": {
+    "title": "搜索",
+    "placeholder": "按名称、内容或标签搜索…",
+    "no_results": "没有匹配项。",
+    "filters_label": "筛选：",
+    "filter_all": "全部",
+    "filter_entities": "实体",
+    "filter_notes": "笔记",
+    "examples": "试试人名、话题，或者你记得的某句话。"
+  },
+  "themes": {
+    "title": "主题",
+    "stats": "已整合 {n} 个 · 共 {runs} 次",
+    "subtitle": "语义记忆——由 LLM 对你的情节记忆做的话题整合摘要。后台 worker 定期刷新，也可手动触发。",
+    "run_btn": "运行整合",
+    "running": "运行中…",
+    "active_eyebrow": "活跃主题",
+    "runs_eyebrow": "整合运行记录",
+    "no_themes": "还没有主题。先捕获几条相关笔记（人、偏好、目标），然后点击",
+    "no_themes_runner_label": "运行整合",
+    "no_themes_dot": "。",
+    "no_runs": "还没有整合运行记录。"
+  },
+  "agents": {
+    "title": "Agents",
+    "connected": "{n} 个已连接",
+    "revoked": "· {n} 个已吊销",
+    "connect_btn": "接入 Agent",
+    "empty": "还没有 Agent。点击 {action} 注册一个。",
+    "form": {
+      "eyebrow": "接入新 Agent",
+      "id_placeholder": "id (例: cursor)",
+      "name_placeholder": "显示名",
+      "add": "添加",
+      "cancel": "取消"
+    },
+    "row": {
+      "connected": "已连接 · {when}",
+      "never_connected": "从未连接",
+      "revoked": "已吊销"
+    },
+    "legend": {
+      "read": "读权限已开",
+      "write": "写权限已开",
+      "unset": "未设置"
+    },
+    "reads_col": "可读"
+  },
+  "audit": {
+    "title": "审计",
+    "subtitle": "每次读写都被加密链式记录。",
+    "verify_btn": "校验链路",
+    "verifying": "校验中…",
+    "ok": "链路完整——未被篡改",
+    "broken": "第 {row} 行链路断裂",
+    "filters": {
+      "all": "全部",
+      "user": "用户",
+      "agent": "Agent",
+      "system": "系统"
+    },
+    "empty": "暂无审计记录。"
+  },
+  "import": {
+    "title": "导入",
+    "subtitle": "从 Claude / Cursor / Codex / CLAUDE.md 导入记忆。",
+    "scan_btn": "重新扫描",
+    "scanning": "扫描中…",
+    "apply_btn": "应用 {n} 项就绪",
+    "applying": "应用中…",
+    "no_sources": "在已知路径下未找到记忆文件。",
+    "select_all": "全选",
+    "deselect_all": "取消全选",
+    "preview_loading": "加载预览中…",
+    "status": {
+      "dry-run": "就绪",
+      "imported": "已导入",
+      "skipped": "已跳过",
+      "failed": "失败"
+    }
+  },
+  "usage": {
+    "title": "用量",
+    "subtitle": "每次调用的 token 数与费用，近 90 天。",
+    "empty": "暂无用量数据——在设置里配好 AI Provider 并捕获一条笔记。"
+  },
+  "settings": {
+    "title": "设置",
+    "subtitle": "身份密钥、抽取模型、Provider——以及你的数据存放位置。",
+    "data_location": "Cairn 数据位于 ~/Library/Application Support/cairn · v0.1.0",
+    "language": {
+      "eyebrow": "语言",
+      "section_title": "界面语言",
+      "description": "决定 Cairn 应用窗口和迁移失败对话框使用哪种语言。浏览器扩展将在后续版本同步。",
+      "opt_auto": "自动",
+      "opt_zh_cn": "中文",
+      "opt_en": "English",
+      "current_auto": "当前生效：{locale} · 跟随系统",
+      "current_manual": "当前生效：{locale} · 手动设置"
+    },
+    "identity": {
+      "title": "身份",
+      "sub": "你的 ed25519 密钥对 · 公钥为每条审计记录签名",
+      "public_key": "公钥",
+      "private_key_location": "私钥位置",
+      "secure_enclave": "安全沙盒"
+    },
+    "extraction": {
+      "title": "抽取",
+      "sub": "决定实体和嵌入在哪里计算。两项都留空即纯 BM25 模式。",
+      "active_extract": "当前抽取模型",
+      "active_embed": "当前嵌入模型",
+      "model": "模型",
+      "api_key": "API KEY",
+      "base_url": "BASE URL",
+      "test_btn": "测试连接",
+      "test_ok": "连接 OK",
+      "test_fail": "连接失败",
+      "save_btn": "保存",
+      "saved": "已保存",
+      "key_paste_hint": "粘贴你的 {provider} key"
+    },
+    "selection": {
+      "title": "选区弹窗",
+      "sub": "在任何 app 里选中文本——Cairn 小药丸出现，一键保存。仅 macOS。",
+      "permission_missing": "缺少辅助功能权限",
+      "permission_granted": "辅助功能权限已开",
+      "macos_only": "仅 macOS",
+      "open_system_settings": "打开系统设置",
+      "request_permission": "申请权限",
+      "enabled": "已启用",
+      "disabled": "已关闭"
+    },
+    "mcp": {
+      "title": "远程 MCP 网桥",
+      "sub": "把 Cairn 的 MCP 服务通过本地 HTTP/SSE 暴露给走隧道的客户端。",
+      "local": "本地",
+      "identify_as": "标识为",
+      "identify_placeholder": "例: cursor、windsurf、chatgpt",
+      "no_tag_hint": "未填——使用默认 agent",
+      "tag_hint": "→ ?agent_id={id}",
+      "tunnel_hint_prefix": "用隧道把本地端口暴露出去：",
+      "connector_hint": "在 ChatGPT → 新建 connector：URL = https://<tunnel>/sse，Auth = 无认证。隧道 URL 即为密钥。"
+    },
+    "maintenance": {
+      "title": "维护",
+      "sub": "清理孤儿向量行 + SQLite VACUUM（缩小磁盘占用）。",
+      "vacuum_btn": "清理孤儿向量",
+      "vacuuming": "清理中…",
+      "armed_btn": "再点一次确认清理",
+      "armed_hint": "数据库大的话可能 ~30s。",
+      "report_template": "扫描 {before} 条向量；删除 {deleted} 个孤儿（+{meta} 元数据）。",
+      "report_file_template": "文件：{before} MB → {after} MB · 节省 {saved} MB"
+    },
+    "capture": {
+      "title": "捕获来源",
+      "sub": "在后台轮询并喂给你的记忆。",
+      "add_imap": "添加 IMAP",
+      "add_ics": "添加 iCal",
+      "imap_form": {
+        "label": "标签（例: Gmail 个人）",
+        "host": "host",
+        "port": "port",
+        "username": "用户名（例: you@gmail.com）",
+        "password": "应用专用密码（存入系统钥匙串）",
+        "folder": "文件夹/标签（默认 Cairn）"
+      },
+      "ics_form": {
+        "label": "标签（例: 个人 Google 日历）",
+        "url": "https://calendar.google.com/calendar/ical/.../basic.ics"
+      },
+      "no_sources": "还没有捕获来源。"
+    },
+    "escape": {
+      "title": "退出舱口——一键导出全部",
+      "sub": "你的数据始终属于你。一键打包成可读的 Markdown bundle，附带审计链时间戳签名。",
+      "export_btn": "导出 {n} 条",
+      "exporting": "导出中…"
+    },
+    "connectors": {
+      "section_title": "MCP 客户端接入",
+      "section_sub": "把 Cairn 接入各个 MCP 客户端的一键配置。状态点来自 agents 表——5 分钟内有通信变绿。",
+      "claude_desktop_path": "粘贴到 ~/Library/Application Support/Claude/claude_desktop_config.json 的 mcpServers 下",
+      "cursor_path": "粘贴到 ~/.cursor/mcp.json 的 mcpServers 下",
+      "web_host": "ChatGPT / Claude.ai（网页版）",
+      "web_path": "在 host UI 里以 \"Custom Connector\" 添加，Auth 设为 None。",
+      "web_extra": "需要公网隧道——先在上方打开 Remote MCP bridge，运行 `cloudflared tunnel --url http://localhost:7717`，然后把 <your-tunnel> 替换为你的隧道域名。",
+      "status_connected": "已连接",
+      "status_last_seen": "上次连接 {when}",
+      "status_idle": "空闲",
+      "status_not_configured": "未配置"
+    }
+  }
+}

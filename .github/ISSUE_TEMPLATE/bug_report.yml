@@ -1,0 +1,92 @@
+name: Bug report
+description: Something is broken or behaving unexpectedly.
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to file a bug report. Please search [existing issues](https://github.com/mutouwilson/cairn/issues?q=is%3Aissue) first.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: A clear, concise description of the bug.
+      placeholder: When I do X, I expect Y, but instead Z happens.
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      description: Minimal steps to reproduce. Numbered list is great.
+      placeholder: |
+        1. Open Cairn
+        2. Type "..."
+        3. Press ⌘+Enter
+        4. ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behaviour
+      description: Include error messages verbatim if any.
+    validations:
+      required: true
+
+  - type: input
+    id: cairn-version
+    attributes:
+      label: Cairn version
+      description: From the About panel, or output of `cairn --version`.
+      placeholder: "v0.1.0 (build a3f8c2d)"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - macOS
+        - Linux
+        - Windows
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: os-version
+    attributes:
+      label: OS version
+      placeholder: "macOS 15.2, Ubuntu 24.04, Windows 11 23H2"
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: |
+        Last ~50 lines of `cairn.log` (macOS: `~/Library/Logs/cairn/`, Linux: `~/.cache/cairn/logs/`, Windows: `%LOCALAPPDATA%\Cairn\logs\`).
+
+        Redact anything sensitive before pasting.
+      render: text
+
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy checklist
+      options:
+        - label: I have removed any sensitive data (memory contents, API keys, real names) from this report.
+          required: true
+        - label: I have searched existing issues for duplicates.
+          required: true

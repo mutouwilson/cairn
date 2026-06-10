@@ -1,0 +1,124 @@
+<div align="center">
+
+# Cairn
+
+**Your memory, structured by AI — readable by every agent, owned by you.**
+
+*Local-first · cryptographically auditable · works with Claude, Cursor, ChatGPT & any MCP agent.*
+
+[![CI](https://github.com/mutouwilson/cairn/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mutouwilson/cairn/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/mutouwilson/cairn/branch/main/graph/badge.svg)](https://codecov.io/gh/mutouwilson/cairn)
+[![License: FSL-1.1-ALv2](https://img.shields.io/badge/license-FSL--1.1--ALv2-blue.svg)](./LICENSE)
+[![Status: alpha](https://img.shields.io/badge/status-alpha-orange.svg)](#status)
+[![Latest release](https://img.shields.io/github/v/release/mutouwilson/cairn?include_prereleases&sort=semver&label=download)](https://github.com/mutouwilson/cairn/releases)
+![Made with Rust](https://img.shields.io/badge/built%20with-Rust-orange.svg?logo=rust)
+![Tauri 2](https://img.shields.io/badge/Tauri-2-FFC131?logo=tauri&logoColor=black)
+![Next.js 15](https://img.shields.io/badge/Next.js-15-black?logo=next.js)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://www.conventionalcommits.org)
+
+</div>
+
+<!-- demo gif goes here once recorded — storyboard in docs/launch.md -->
+
+Write a note. Cairn's AI structures it into typed **entities, relations, and themes**. Any MCP-capable agent — Claude Desktop, Cursor, Codex, Cline — then reads exactly what you authorize. Every read and write is **signed and hashed into a tamper-evident chain**, so you can prove your memory wasn't touched behind your back.
+
+- 🔒 **Local-first & private** — a single SQLite file on *your* machine. No cloud, no account.
+- 🔗 **One memory, every agent** — shared over MCP, plus a browser extension that works across 10+ AI chat sites (ChatGPT, Claude, Gemini, DeepSeek, Kimi, 豆包…).
+- 🧾 **Verify, don't trust** — Merkle + Ed25519 audit chain; every access is provable, offline.
+
+**[⬇ Download for macOS / Windows / Linux »](https://github.com/mutouwilson/cairn/releases)**  ·  or [build from source](#quick-start)
+
+> [!IMPORTANT]
+> **Status:** alpha, source-available under [FSL-1.1](./LICENSE) (each release converts to Apache-2.0 after two years). Prebuilt desktop apps + the Chrome extension are in [Releases](https://github.com/mutouwilson/cairn/releases). On-device extraction (V5) and dev-tool memory sync (V6) are in progress.
+
+## Why Cairn
+
+| Other memory products | Cairn |
+|---|---|
+| Locked to one model (Mem.ai → OpenAI, Anthropic Memory → Claude) | **Protocol-neutral** via MCP — any MCP-capable agent |
+| Flat key-value store | **Typed, structured** (8 entity types) + relations + Ebbinghaus decay |
+| "Trust us" on privacy | **Cryptographic audit log** — Merkle chain + Ed25519, verify-don't-trust |
+| Schema-free text | **Schema-constrained extraction** via `tool_use` + JSON-Schema validation |
+| API call per note | Phase 2: **on-device 1.5 B model** — free, instant, offline |
+
+## Features
+
+- **Local-first** — single SQLite file under `~/Library/Application Support/cairn/`. Nothing leaves the device unless you grant access.
+- **MCP-native** — `cairn-mcp` standalone binary speaks JSON-RPC 2.0 over stdio; drop it into Claude Desktop / Cursor in 30 seconds.
+- **Per-agent × per-entity-type permission matrix** — grant Claude read on `Preference` but not `Finance`, in one click.
+- **Merkle-chained audit log** — every read, write, extract and grant is hashed and Ed25519-signed. `cairn verify-chain` walks the whole history offline.
+- **Hybrid retrieval** — SQLite FTS5 BM25 + entity-type filter + importance reinforcement + Ebbinghaus recency decay, re-ranked.
+- **Multi-surface capture** — manual note, ⌥-Space hotkey, selection popover, IMAP, iCal subscription.
+- **Three binaries, one crate** — `cairn` (GUI), `cairn-mcp` (MCP server), `cairn-migrate` (encrypted DB migration).
+- **Optional at-rest encryption** — `--features encrypted` builds a vendored SQLCipher; key in your OS keychain.
+
+## Quick start
+
+```bash
+git clone https://github.com/mutouwilson/cairn.git
+cd cairn/memory
+pnpm install
+cp .env.example .env          # add AI_GATEWAY_API_KEY or ANTHROPIC_API_KEY
+pnpm tauri:dev                # Tauri shell with Next.js hot-reload
+```
+
+The first `cargo build` pulls a lot — give it 5–10 minutes; subsequent builds are incremental.
+
+See [DEVELOPMENT.md](./DEVELOPMENT.md) for full setup, MCP integration and common pitfalls.
+
+## Architecture
+
+```
+       Next.js 15 UI  ←─Tauri IPC─→  Rust core (cairn_lib)
+                                       │
+                                       ├─ capture / extract / embed
+                                       ├─ retrieval (BM25 + importance)
+                                       ├─ audit  (Merkle + Ed25519)
+                                       └─ mcp    (stdio JSON-RPC)
+                                            │
+                                            ▼
+                                  Claude Desktop · Cursor · Codex …
+```
+
+Full module map and design decisions in [ARCHITECTURE.md](./ARCHITECTURE.md).
+
+## Repo layout
+
+| Path | What's in it |
+|---|---|
+| [`memory/`](./memory) | Cairn desktop app — Tauri shell, Next.js UI, Rust core |
+| [`memory/src-tauri/`](./memory/src-tauri) | Rust core: SQLite + FTS5, audit chain, MCP, capture surfaces |
+| [`memory/tools/browser-ext/`](./memory/tools/browser-ext) | Browser extension (selection capture) |
+| [`tools/distill/`](./tools/distill) | On-device extraction model (Qwen 2.5-1.5B distillation, MLX) — Phase 2 |
+| [`tools/share-extension/`](./tools/share-extension) | macOS share-sheet integration |
+
+## Roadmap
+
+- **Phase 1 (now)** — App + MCP + audit + Anthropic/Gateway extraction ✅
+- **Phase 2** — On-device extraction (Qwen 2.5-1.5B, MLX) · hierarchical memory · dev-tool sync (V6)
+- **Phase 3** — Personal embedding fine-tuning · CRDT multi-device sync
+- **Phase 4** — BBS+ selective-disclosure proofs · Family Context
+
+## Status
+
+| Surface | Status |
+|---|---|
+| Capture (manual, hotkey, selection, IMAP, iCal) | ✅ shipping |
+| Schema-constrained extraction (Anthropic API + Gateway) | ✅ shipping |
+| MCP stdio server + permission matrix | ✅ shipping |
+| Audit chain (Merkle + Ed25519) | ✅ shipping |
+| Hybrid retrieval (FTS5 + importance + recency) | ✅ shipping |
+| Optional encrypted SQLite (SQLCipher) | 🧪 experimental |
+| **On-device extraction (Qwen 2.5-1.5B)** | 🚧 in progress |
+| **Dev-tool memory sync (V6)** | 🚧 in progress |
+| CRDT multi-device sync | ⏳ planned |
+
+## Contributing
+
+We're in private alpha; outside contributions aren't open yet, but issues are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the rules, and [SECURITY.md](./SECURITY.md) for vulnerability reports.
+
+## License
+
+[Functional Source License (FSL-1.1-ALv2)](./LICENSE) — **Fair Source**, not OSI "open source". The code is fully public and auditable, and you may use, modify, and self-host it for any **non-competing** purpose. You may **not** use it to build a commercial product or service that competes with Cairn. Two years after each release, that version automatically converts to **Apache-2.0**.
+
+Want to use Cairn in a competing or proprietary product before then? A separate commercial license is available — open an issue to get in touch.

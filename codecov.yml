@@ -1,0 +1,44 @@
+codecov:
+  require_ci_to_pass: true
+  notify:
+    wait_for_ci: true
+
+coverage:
+  precision: 2
+  round: down
+  range: "60...90"
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+        informational: true
+    patch:
+      default:
+        target: 70%
+        threshold: 5%
+        informational: true
+
+comment:
+  layout: "header, diff, flags, components, files"
+  require_changes: true
+  require_base: false
+
+flags:
+  rust:
+    paths:
+      - memory/src-tauri/
+    carryforward: true
+  frontend:
+    paths:
+      - memory/src/
+    carryforward: true
+
+ignore:
+  - "memory/src-tauri/migrations/"
+  - "memory/src-tauri/icons/"
+  - "memory/src-tauri/tauri.conf.json"
+  - "memory/out/"
+  - "memory/.next/"
+  - "tools/distill/"
+  - "**/tests/fixtures/"

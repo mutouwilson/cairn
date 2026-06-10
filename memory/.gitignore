@@ -1,0 +1,43 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# next.js
+.next/
+out/
+
+# typescript incremental build state
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# rust / tauri
+src-tauri/target/
+src-tauri/gen/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# editor
+.vscode/
+.idea/
+.DS_Store
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# data (local user data, NEVER commit)
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# keys (NEVER commit)
+*.key
+*.pem
+audit_signing_key

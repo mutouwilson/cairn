@@ -1,0 +1,104 @@
+# =========================================================
+#  OS / editor
+# =========================================================
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# =========================================================
+#  Node / Next.js
+# =========================================================
+node_modules/
+.next/
+out/
+dist/
+build/
+*.tsbuildinfo
+.pnpm-store/
+.npm/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================================================
+#  Rust / Tauri
+# =========================================================
+target/
+**/*.rs.bk
+*.pdb
+memory/src-tauri/gen/
+
+# =========================================================
+#  Python (tools/distill)
+# =========================================================
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+
+# distill outputs (regenerable)
+tools/distill/data/
+tools/distill/models/
+tools/distill/runs/
+
+# =========================================================
+#  Secrets / environment
+# =========================================================
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Tauri signing keys / private material
+*.key
+*.pem
+!**/keystore/README*
+
+# =========================================================
+#  Logs / runtime
+# =========================================================
+*.log
+logs/
+*.pid
+
+# =========================================================
+#  Large binaries / models
+# =========================================================
+*.gguf
+*.safetensors
+*.onnx
+*.pt
+*.bin
+!Cargo.lock
+
+# =========================================================
+#  Pencil temp / Sketch
+# =========================================================
+*.pen.bak
+.pencil-cache/
+
+# =========================================================
+#  Misc local junk
+# =========================================================
+.cache/
+tmp/
+.tmp/
+
+# =========================================================
+#  Claude Code / agent tool local config
+# =========================================================
+.claude/
+CLAUDE.md
+AGENTS.md
+
+# Pencil design source — kept local, not shipped in the public repo
+/cairn.pen
