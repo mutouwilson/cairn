@@ -96,7 +96,7 @@ keyring = { version = "3.6", features = ["apple-native", "linux-native", "window
 safetensors = "0.4"
 
 # Capture surfaces (Phase 5)
-async-imap = { version = "0.10", default-features = false, features = ["runtime-tokio"] }
+async-imap = { version = "0.11", default-features = false, features = ["runtime-tokio"] }
 tokio-rustls = { version = "0.26" }
 rustls = { version = "0.23", default-features = false, features = ["std", "tls12"] }
 rustls-pki-types = "1"
