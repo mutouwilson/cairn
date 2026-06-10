@@ -86,7 +86,7 @@ walkdir = "2.5"
 
 # Phase 7 V6 M3: filesystem watcher so ~/.claude memory changes auto-import
 # without the user clicking Apply.
-notify = "6"
+notify = "8"
 notify-debouncer-mini = "0.4"
 
 # OS keychain (Phase 3a)
