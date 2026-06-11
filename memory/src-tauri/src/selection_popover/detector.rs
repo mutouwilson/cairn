@@ -204,7 +204,11 @@ where
                 // A clipboard-sourced popover gets no AX-clear signal, so it
                 // stays up here with `last_text` still set — poll fast so we
                 // catch the click-outside that dismisses it.
-                let nap = if last_text.is_some() { POLL_SHOWN_MS } else { POLL_IDLE_MS };
+                let nap = if last_text.is_some() {
+                    POLL_SHOWN_MS
+                } else {
+                    POLL_IDLE_MS
+                };
                 tokio::time::sleep(Duration::from_millis(nap)).await;
             }
             Some(mut ev) => {
@@ -243,7 +247,11 @@ where
                 }
                 // Popover up (or just shown) → poll fast to catch click-outside;
                 // otherwise fall back to the hot re-check cadence.
-                let nap = if last_text.is_some() { POLL_SHOWN_MS } else { POLL_HOT_MS };
+                let nap = if last_text.is_some() {
+                    POLL_SHOWN_MS
+                } else {
+                    POLL_HOT_MS
+                };
                 tokio::time::sleep(Duration::from_millis(nap)).await;
             }
         }

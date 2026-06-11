@@ -181,7 +181,13 @@ fn truncate(s: &str, max: usize) -> String {
     if s.len() <= max {
         s.to_string()
     } else {
-        let mut out = s[..max].to_string();
+        // Snap to a char boundary — a raw `&s[..max]` panics when a
+        // multi-byte char (CJK mail bodies) straddles the cut.
+        let mut end = max;
+        while !s.is_char_boundary(end) {
+            end -= 1;
+        }
+        let mut out = s[..end].to_string();
         out.push_str("\n…(truncated)");
         out
     }

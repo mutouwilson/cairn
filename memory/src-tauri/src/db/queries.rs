@@ -355,10 +355,7 @@ impl Db {
         for id in ids {
             q = q.bind(id);
         }
-        let rows = q
-            .fetch_all(self.pool())
-            .await
-            .context("notes_by_ids")?;
+        let rows = q.fetch_all(self.pool()).await.context("notes_by_ids")?;
         Ok(rows)
     }
 
@@ -2043,12 +2040,14 @@ impl Db {
     /// `run_import` compares against — see the resync path note in commands.
     pub async fn set_import_skip(&self, source_path: &str, skipped: bool) -> Result<()> {
         if skipped {
-            sqlx::query("INSERT OR IGNORE INTO import_skips (source_path, skipped_at) VALUES (?, ?)")
-                .bind(source_path)
-                .bind(now_ms())
-                .execute(self.pool())
-                .await
-                .context("add import_skip")?;
+            sqlx::query(
+                "INSERT OR IGNORE INTO import_skips (source_path, skipped_at) VALUES (?, ?)",
+            )
+            .bind(source_path)
+            .bind(now_ms())
+            .execute(self.pool())
+            .await
+            .context("add import_skip")?;
         } else {
             sqlx::query("DELETE FROM import_skips WHERE source_path = ?")
                 .bind(source_path)

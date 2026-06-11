@@ -19,6 +19,17 @@ pub async fn run_consolidation(
 ) -> Result<ConsolidationStats> {
     let run_id = Ulid::new().to_string();
     let started_at = now_ms();
+    // Finalize rows a previous process left in 'running' (crash / quit / the
+    // historic panic path) so the history never accumulates zombies. A truly
+    // concurrent live run self-heals: its finish_run overwrites this status.
+    sqlx::query(
+        "UPDATE consolidation_runs SET status = 'aborted', finished_at = ?, \
+           error = COALESCE(error, 'interrupted — process exited mid-run') \
+         WHERE status = 'running'",
+    )
+    .bind(started_at)
+    .execute(db.pool())
+    .await?;
     sqlx::query(
         "INSERT INTO consolidation_runs (id, started_at, trigger, status) VALUES (?, ?, ?, 'running')",
     )
@@ -46,17 +57,33 @@ pub async fn run_consolidation(
 
     for cand in topics {
         stats.topics_scanned += 1;
-        match consolidate_topic(db, client, cfg, &cand).await {
-            Ok(created) => {
+        // Each topic runs in its own task: a panic must fail THIS topic and
+        // surface in `errors`, not silently kill the whole run — that's how
+        // runs used to wedge in status='running' forever.
+        let t_db = db.clone();
+        let t_client = client.clone();
+        let t_cfg = cfg.clone();
+        let t_cand = cand.clone();
+        let joined =
+            tokio::spawn(async move { consolidate_topic(&t_db, &t_client, &t_cfg, &t_cand).await })
+                .await;
+        match joined {
+            Ok(Ok(created)) => {
                 if created {
                     stats.semantic_created += 1;
                 } else {
                     stats.semantic_updated += 1;
                 }
             }
-            Err(e) => {
+            Ok(Err(e)) => {
                 tracing::warn!(topic = %cand.key, error = %e, "topic consolidation failed");
                 stats.errors.push(format!("{}: {}", cand.key, e));
+            }
+            Err(join_err) => {
+                tracing::error!(topic = %cand.key, "topic task panicked: {join_err}");
+                stats
+                    .errors
+                    .push(format!("{}: panicked: {}", cand.key, join_err));
             }
         }
     }
@@ -114,8 +141,13 @@ fn value_brief(v: &Value) -> String {
         Value::Bool(b) => b.to_string(),
         Value::Number(n) => n.to_string(),
         Value::String(s) => {
-            if s.len() > 60 {
-                format!("\"{}…\"", &s[..60])
+            // Truncate on a char boundary. Byte-slicing (`&s[..60]`) panics
+            // the moment a multi-byte char straddles the cut — Chinese
+            // property values hit this constantly and the panic silently
+            // killed the whole consolidation task.
+            if s.chars().count() > 30 {
+                let head: String = s.chars().take(30).collect();
+                format!("\"{}…\"", head)
             } else {
                 format!("\"{}\"", s)
             }
@@ -146,7 +178,19 @@ async fn upsert_semantic(
     .await?;
 
     let new_id = Ulid::new().to_string();
+    let created = existing.is_none();
     let mut tx = db.pool().begin().await?;
+    // Superseding is wedged both ways under immediate checks: the partial
+    // unique index (one active row per topic) rejects INSERT-before-UPDATE,
+    // and the superseded_by → id foreign key rejects UPDATE-before-INSERT
+    // (the new id doesn't exist yet). Defer FK enforcement to COMMIT, then
+    // run UPDATE → INSERT: at commit time the old row is inactive (unique
+    // index happy) and the new id exists (FK happy). Re-consolidation of an
+    // existing topic was silently failing on one of the two constraints
+    // since the feature shipped.
+    sqlx::query("PRAGMA defer_foreign_keys = ON")
+        .execute(&mut *tx)
+        .await?;
     if let Some((old_id,)) = existing {
         sqlx::query("UPDATE semantic_memories SET superseded_by = ? WHERE id = ?")
             .bind(&new_id)
@@ -154,7 +198,6 @@ async fn upsert_semantic(
             .execute(&mut *tx)
             .await?;
     }
-
     sqlx::query(
         "INSERT INTO semantic_memories \
            (id, topic, title, summary, evidence, confidence, created_at, last_consolidated_at, \
@@ -173,7 +216,73 @@ async fn upsert_semantic(
     .execute(&mut *tx)
     .await?;
     tx.commit().await?;
-    Ok(true)
+    Ok(created)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tempfile::tempdir;
+
+    /// Re-consolidating an existing topic was wedged both ways (partial
+    /// unique index vs superseded_by FK) until upsert deferred FK checks.
+    /// Locks the supersede chain + the created/updated return semantics.
+    #[tokio::test]
+    async fn upsert_supersedes_existing_topic() {
+        let dir = tempdir().unwrap();
+        let db = Db::open(&dir.path().join("test.db")).await.unwrap();
+
+        let created = upsert_semantic(&db, "person:妈", "v1", "first summary", 0.9, &[])
+            .await
+            .unwrap();
+        assert!(created, "first upsert must report created");
+
+        let created = upsert_semantic(&db, "person:妈", "v2", "second summary", 0.95, &[])
+            .await
+            .unwrap();
+        assert!(!created, "second upsert must report updated, not created");
+
+        let (active, total): (i64, i64) = (
+            sqlx::query_scalar(
+                "SELECT COUNT(*) FROM semantic_memories WHERE superseded_by IS NULL",
+            )
+            .fetch_one(db.pool())
+            .await
+            .unwrap(),
+            sqlx::query_scalar("SELECT COUNT(*) FROM semantic_memories")
+                .fetch_one(db.pool())
+                .await
+                .unwrap(),
+        );
+        assert_eq!(active, 1, "exactly one active row per topic");
+        assert_eq!(total, 2, "old version kept in the chain");
+
+        let (title, chained): (String, i64) = sqlx::query_as(
+            "SELECT a.title, EXISTS(
+                 SELECT 1 FROM semantic_memories old
+                 WHERE old.superseded_by = a.id
+             )
+             FROM semantic_memories a WHERE a.superseded_by IS NULL",
+        )
+        .fetch_one(db.pool())
+        .await
+        .unwrap();
+        assert_eq!(title, "v2", "active row is the new version");
+        assert_eq!(chained, 1, "old row points at the new one");
+    }
+
+    /// `&s[..60]` byte-slicing panicked mid-char on CJK values and silently
+    /// killed whole consolidation runs.
+    #[test]
+    fn value_brief_truncates_cjk_on_char_boundary() {
+        let long_cjk = "记".repeat(31);
+        let out = value_brief(&Value::String(long_cjk));
+        assert!(out.ends_with("…\""), "long values get an ellipsis: {out}");
+        assert_eq!(out.chars().filter(|c| *c == '记').count(), 30);
+
+        let short = value_brief(&Value::String("短值".into()));
+        assert_eq!(short, "\"短值\"");
+    }
 }
 
 async fn finish_run(

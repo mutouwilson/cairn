@@ -164,7 +164,13 @@ async fn handle_tools_call(ctx: &McpContext, params: &Value) -> Result<Value> {
 
     let args_str = serde_json::to_string(&arguments).unwrap_or_default();
     let args_truncated = if args_str.len() > 4096 {
-        format!("{}...[truncated]", &args_str[..4096])
+        // Snap to a char boundary — a raw `&args_str[..4096]` panics when a
+        // multi-byte char (CJK note content) straddles the cut.
+        let mut end = 4096;
+        while !args_str.is_char_boundary(end) {
+            end -= 1;
+        }
+        format!("{}...[truncated]", &args_str[..end])
     } else {
         args_str
     };

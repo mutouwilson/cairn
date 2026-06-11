@@ -44,18 +44,18 @@ pub fn spawn_worker(db: Db, providers: Arc<LiveProviders>, env: Option<Consolida
                 None => {
                     tracing::debug!("consolidation tick skipped: no provider configured");
                 }
-                Some((client, cfg)) => match run_consolidation(&db, &client, &cfg, "scheduled")
-                    .await
-                {
-                    Ok(stats) => tracing::info!(
-                        topics = stats.topics_scanned,
-                        created = stats.semantic_created,
-                        updated = stats.semantic_updated,
-                        errors = stats.errors.len(),
-                        "consolidation run done"
-                    ),
-                    Err(e) => tracing::error!(?e, "consolidation run failed"),
-                },
+                Some((client, cfg)) => {
+                    match run_consolidation(&db, &client, &cfg, "scheduled").await {
+                        Ok(stats) => tracing::info!(
+                            topics = stats.topics_scanned,
+                            created = stats.semantic_created,
+                            updated = stats.semantic_updated,
+                            errors = stats.errors.len(),
+                            "consolidation run done"
+                        ),
+                        Err(e) => tracing::error!(?e, "consolidation run failed"),
+                    }
+                }
             }
             // Piggy-back the stale-entity sweep on the same cadence. The
             // sweep is cheap (a single UPDATE) and only touches entities

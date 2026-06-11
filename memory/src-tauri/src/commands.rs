@@ -1459,7 +1459,11 @@ pub async fn import_set_skip(
     state: State<'_, AppState>,
 ) -> CmdResult<()> {
     resolve_import_path(&path)?; // security gate (canonical result unused)
-    state.db.set_import_skip(&path, skipped).await.map_err(err)?;
+    state
+        .db
+        .set_import_skip(&path, skipped)
+        .await
+        .map_err(err)?;
     Ok(())
 }
 

@@ -245,7 +245,10 @@ pub async fn run_import(
                 summary.skipped_dup += 1;
                 (
                     DocStatus::Unchanged,
-                    prior.as_ref().map(|r| r.note_id.clone()).unwrap_or_default(),
+                    prior
+                        .as_ref()
+                        .map(|r| r.note_id.clone())
+                        .unwrap_or_default(),
                 )
             } else {
                 summary.unlinked += 1;
