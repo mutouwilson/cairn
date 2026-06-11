@@ -66,6 +66,26 @@ The first `cargo build` pulls a lot — give it 5–10 minutes; subsequent build
 
 See [DEVELOPMENT.md](./DEVELOPMENT.md) for full setup, MCP integration and common pitfalls.
 
+## Browser extension
+
+Brings your memory into the AI chat sites you already use: as you type, relevant memories surface inline and inject with one keypress; any selection on any page can be saved back to Cairn.
+
+**Install** (not on the Chrome Web Store yet — load unpacked):
+
+1. Make sure the **Cairn desktop app is running** — the extension talks to it at `http://127.0.0.1:7716`, all local.
+2. Download `cairn-chrome-extension-*.zip` from [Releases](https://github.com/mutouwilson/cairn/releases) and unzip it to a folder you keep around (Chrome loads it from disk).
+3. Open `chrome://extensions` → enable **Developer mode** → **Load unpacked** → select the unzipped folder.
+4. Click the Cairn icon → it should show *connected*. If you start Cairn with `CAIRN_API_TOKEN=…`, paste the same token in the extension's Options page.
+
+**Use:**
+
+- **Passive recall** — type in a supported chat composer; when your words match stored memories, a pill appears. The picker opens on strong matches: `1/2/3` toggle rows, `Enter` injects the selected memories as a context block, `Esc` dismisses. (IME-safe — composition keys are never intercepted.)
+- **Summon** — type `@cairn <query>` in the composer to search explicitly.
+- **Save from anywhere** — select text on any page → right-click → *Save selection to Cairn* (or *Save this page to Cairn*, or *Search Cairn for "…"*).
+- **Quick search** — `⌘⇧L` / `Ctrl+Shift+L` opens the search popup; or type `cairn <query>` in the address bar.
+
+**Works on:** ChatGPT, Claude, Gemini, DeepSeek, Kimi, 豆包, 文心一言, 通义千问, Mira, Manus, Genspark — toggle per-site in Options.
+
 ## Architecture
 
 ```
