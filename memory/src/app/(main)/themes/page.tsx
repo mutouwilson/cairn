@@ -38,6 +38,27 @@ export default function ThemesPage() {
     refresh();
   }, []);
 
+  // A manual run can take minutes (one LLM call per topic) and the command
+  // only resolves at the very end. While it's in flight, poll the lists so
+  // results land as soon as the backend writes them, and tick an elapsed
+  // counter so the button doesn't read as frozen.
+  const [elapsed, setElapsed] = useState(0);
+  useEffect(() => {
+    if (!busy) return;
+    setElapsed(0);
+    const started = Date.now();
+    const tick = setInterval(
+      () => setElapsed(Math.floor((Date.now() - started) / 1000)),
+      1000,
+    );
+    const poll = setInterval(() => void refresh(), 4000);
+    return () => {
+      clearInterval(tick);
+      clearInterval(poll);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [busy]);
+
   async function trigger() {
     if (busy) return;
     setBusy(true);
@@ -68,7 +89,7 @@ export default function ThemesPage() {
         </div>
         <BtnPrimary onClick={trigger} disabled={busy}>
           <SparkleIcon />
-          {busy ? t("themes.running") : t("themes.run_btn")}
+          {busy ? `${t("themes.running")} ${elapsed}s` : t("themes.run_btn")}
         </BtnPrimary>
       </header>
 
