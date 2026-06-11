@@ -1,8 +1,8 @@
 # Contributing to Cairn
 
-Thanks for your interest! Cairn is **private alpha** at the moment — the repo is closed-source while we get the core right. We are not yet accepting unsolicited contributions, but issues are welcome from anyone with access.
+Thanks for your interest! Cairn is in **alpha** — the source is public ([FSL-1.1](./LICENSE), Fair Source) while the core is still moving fast. **Issues and bug reports are very welcome.** For code contributions, please open an issue to discuss before sending a PR — the architecture shifts quickly at this stage and we'd hate for your work to go to waste.
 
-When the repo flips to public this file will be the canonical guide for outside contributors. Sections marked **(post-public)** kick in then.
+Sections marked **(post-public)** describe the full contributor flow as it stabilizes.
 
 ## Quick links
 

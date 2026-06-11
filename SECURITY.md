@@ -52,7 +52,7 @@ We follow **coordinated disclosure**:
 
 ## Supported versions
 
-During private alpha, only the `main` branch tip is supported. Once we tag releases (v0.1+), the latest minor will receive security fixes.
+During alpha, only the `main` branch tip and the latest tagged pre-release are supported. Once we reach v0.1 stable, the latest minor will receive security fixes.
 
 ## Hall of fame
 

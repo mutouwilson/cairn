@@ -115,7 +115,7 @@ Full module map and design decisions in [ARCHITECTURE.md](./ARCHITECTURE.md).
 
 ## Contributing
 
-We're in private alpha; outside contributions aren't open yet, but issues are welcome. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the rules, and [SECURITY.md](./SECURITY.md) for vulnerability reports.
+Cairn is in fast-moving alpha — **issues and bug reports are very welcome**; for code, open an issue to discuss before sending a PR. See [CONTRIBUTING.md](./CONTRIBUTING.md) for the rules, and [SECURITY.md](./SECURITY.md) for vulnerability reports.
 
 ## License
 
