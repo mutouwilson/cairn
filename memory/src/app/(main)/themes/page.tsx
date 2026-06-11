@@ -49,7 +49,9 @@ export default function ThemesPage() {
       );
       refresh();
     } catch (e) {
-      setHint(`error: ${(e as Error).message}`);
+      // Tauri commands reject with a plain string (CmdResult's Err), not an
+      // Error — `.message` on it is undefined and eats the real reason.
+      setHint(`error: ${e instanceof Error ? e.message : String(e)}`);
     } finally {
       setBusy(false);
     }

@@ -87,10 +87,11 @@ impl AppState {
             retrieval::Retriever::with_live_providers(db.clone(), providers_live.clone());
         let embedding_model_id = providers_live.embedding_model_id();
 
+        // Worker always spawns — it resolves the provider per tick (Settings
+        // first, these env-built services as fallback), so users who add a
+        // key in Settings get background consolidation without a restart.
         let consolidation = build_consolidation_services();
-        if let Some(svc) = &consolidation {
-            consolidation::spawn_worker(db.clone(), svc.client.clone(), svc.cfg.clone());
-        }
+        consolidation::spawn_worker(db.clone(), providers_live.clone(), consolidation.clone());
 
         let capture = capture::worker::CaptureSupervisor::new(db.clone());
         capture.restart_all().await;

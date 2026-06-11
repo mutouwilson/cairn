@@ -635,10 +635,29 @@ pub async fn list_consolidation_runs(
 pub async fn trigger_consolidation(
     state: State<'_, AppState>,
 ) -> CmdResult<crate::consolidation::ConsolidationStats> {
-    let Some(svc) = state.consolidation.clone() else {
-        return Err("consolidation services unavailable (no AI_GATEWAY_API_KEY)".into());
+    // Prefer the live (Settings-page) provider so a key added in Settings
+    // works immediately; env-built services are the fallback for .env users.
+    let (client, cfg) = if let Some(cfg) = state.providers.consolidation_config() {
+        let client = reqwest::Client::builder()
+            .timeout(std::time::Duration::from_secs(120))
+            .build()
+            .map_err(err)?;
+        (client, cfg)
+    } else if let Some(svc) = state.consolidation.clone() {
+        (svc.client, svc.cfg)
+    } else {
+        return Err(match state.providers.extract_provider_label() {
+            Some((label, false)) => format!(
+                "your extract provider ({label}) has no OpenAI-compatible chat endpoint, \
+                 which consolidation needs — switch to e.g. Vercel AI Gateway or OpenRouter \
+                 in Settings → AI Providers, or set AI_GATEWAY_API_KEY"
+            ),
+            _ => "consolidation needs an AI provider — configure one in \
+                  Settings → AI Providers, or set AI_GATEWAY_API_KEY"
+                .to_string(),
+        });
     };
-    crate::consolidation::run_consolidation(&state.db, &svc.client, &svc.cfg, "manual")
+    crate::consolidation::run_consolidation(&state.db, &client, &cfg, "manual")
         .await
         .map_err(err)
 }

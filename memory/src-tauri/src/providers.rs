@@ -335,6 +335,10 @@ struct LiveInner {
     extractor: Arc<dyn crate::extract::ExtractionProvider>,
     embedder: Arc<dyn crate::embed::EmbeddingProvider>,
     embedding_model_id: String,
+    /// Raw extract-slot config, kept so call sites that need a *chat*
+    /// endpoint (consolidation) can derive one from the same provider the
+    /// user configured in Settings — not just from env vars.
+    extract_cfg: Option<ProviderConfig>,
 }
 
 impl LiveProviders {
@@ -349,6 +353,7 @@ impl LiveProviders {
                 extractor,
                 embedder,
                 embedding_model_id,
+                extract_cfg: cfg.extract.clone(),
             }),
             embedding_dim,
         })
@@ -366,6 +371,39 @@ impl LiveProviders {
         self.inner.read().embedding_model_id.clone()
     }
 
+    /// OpenAI-compatible chat config derived from the live extract provider —
+    /// what the consolidation pipeline drives. `None` when no provider is
+    /// configured, the key is empty, or the family has no OpenAI-compatible
+    /// chat endpoint (Anthropic-direct is the only such family).
+    pub fn consolidation_config(
+        &self,
+    ) -> Option<crate::extract::openai_compat::OpenAiCompatConfig> {
+        let cfg = self.inner.read().extract_cfg.clone()?;
+        if cfg.api_key.trim().is_empty() || !cfg.family.preset().openai_compatible_chat {
+            return None;
+        }
+        Some(crate::extract::openai_compat::OpenAiCompatConfig {
+            base_url: cfg.base_url(),
+            api_key: cfg.api_key.clone(),
+            model: cfg.model.clone(),
+            label: family_static_label(cfg.family),
+        })
+    }
+
+    /// `(label, openai_compatible)` of the configured extract provider, if
+    /// any — lets error paths distinguish "nothing configured" from
+    /// "configured but chat-incompatible (Anthropic)".
+    pub fn extract_provider_label(&self) -> Option<(&'static str, bool)> {
+        let cfg = self.inner.read().extract_cfg.clone()?;
+        if cfg.api_key.trim().is_empty() {
+            return None;
+        }
+        Some((
+            family_static_label(cfg.family),
+            cfg.family.preset().openai_compatible_chat,
+        ))
+    }
+
     /// Rebuild from the given config and atomically swap the live handles.
     /// Returns `Ok(())` always — failed extractor/embedder builds fall
     /// back to no-op providers (BM25-only mode) instead of erroring.
@@ -379,6 +417,7 @@ impl LiveProviders {
         w.extractor = extractor;
         w.embedder = embedder;
         w.embedding_model_id = embedding_model_id;
+        w.extract_cfg = cfg.extract.clone();
     }
 }
 
