@@ -41,3 +41,5 @@ data/
 *.key
 *.pem
 audit_signing_key
+
+*.pen

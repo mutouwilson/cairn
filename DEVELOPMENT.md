@@ -28,7 +28,8 @@ rustup-init -y --default-toolchain stable
 # Ubuntu 22.04 / 24.04
 sudo apt-get install -y \
   libwebkit2gtk-4.1-dev libsoup-3.0-dev libjavascriptcoregtk-4.1-dev \
-  librsvg2-dev libssl-dev pkg-config build-essential curl
+  librsvg2-dev libssl-dev libayatana-appindicator3-dev \
+  pkg-config build-essential curl
 curl -fsSL https://get.pnpm.io/install.sh | sh -
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ```
@@ -39,9 +40,13 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 git clone https://github.com/mutouwilson/cairn.git
 cd cairn/memory
 pnpm install
-cp .env.example .env       # fill in AI_GATEWAY_API_KEY or ANTHROPIC_API_KEY
 pnpm tauri:dev             # launches Tauri shell with hot-reload
 ```
+
+AI providers: the recommended path is to configure them in-app after first
+launch — **Settings → AI providers** (10 provider families, hot-reloaded
+without restart). `cp .env.example .env` and filling in `AI_GATEWAY_API_KEY`
+(or `ANTHROPIC_API_KEY`) still works as an env-level fallback; it's optional.
 
 The first `cargo build` takes a few minutes (Tauri pulls a lot). Subsequent builds are incremental and fast.
 
@@ -52,29 +57,45 @@ cairn/
 ├── README.md                    Project entry point
 ├── ARCHITECTURE.md              System design
 ├── DEVELOPMENT.md               This file
+├── CHANGELOG.md                 Day-to-day change log
+├── CONTRIBUTING.md              Contribution guide
+├── SECURITY.md                  Security policy
+├── CODE_OF_CONDUCT.md
+├── LICENSE                      FSL-1.1-ALv2 (Functional Source License)
+├── codecov.yml                  Coverage reporting config
+├── package.json                 Root tooling only (husky + lint-staged + commitlint)
+├── .github/workflows/           ci.yml + release.yml
 ├── .gitignore
+├── bench/
+│   └── locomo/                  LoCoMo retrieval benchmark harness
+├── docs/
+│   └── launch.md                Launch notes
 ├── memory/                      Main application
 │   ├── package.json             Node deps (Next.js 15, React 19, Zustand, Tailwind)
 │   ├── next.config.mjs          Static export config
 │   ├── tailwind.config.ts
 │   ├── src/                     Next.js UI (TypeScript)
-│   │   ├── app/(main)/          Main UI: /, /entities, /agents, /audit, /import, /search, /settings
+│   │   ├── app/(main)/          Main UI: /, /entities, /entity, /agents, /audit,
+│   │   │                        /import, /search, /settings, /themes, /usage
 │   │   ├── app/(popup)/         Popover surfaces: quick-capture, selection-popover
 │   │   ├── components/          Capture, Timeline, EntityChip
-│   │   └── lib/                 tauri.ts (typed invoke), types.ts
+│   │   └── lib/                 tauri.ts (typed invoke), types.ts, utils.ts,
+│   │                            i18n/ (en + zh-CN dictionaries)
 │   ├── src-tauri/               Rust core
 │   │   ├── Cargo.toml           Crate manifest — three binaries: cairn, cairn-mcp, cairn-migrate
 │   │   ├── src/                 See ARCHITECTURE.md for module roles
 │   │   ├── migrations/          sqlx migrations
 │   │   ├── icons/               App icons
 │   │   └── tauri.conf.json
+│   ├── benchmarks/              Benchmark runs (locomo)
+│   ├── tools/
+│   │   └── browser-ext/         Browser extension — shipped (load-unpacked zip in Releases)
 │   ├── docs/                    Per-app docs (SETUP, MCP_INTEGRATION, etc.)
 │   └── .env.example
 ├── tools/
 │   ├── distill/                 Python — on-device extraction model distillation (Phase 2)
-│   ├── share-extension/         macOS share-sheet integration
-│   └── browser-ext/             Browser extension (planned)
-└── untitled.pen                 Pencil UI design source
+│   └── share-extension/         macOS share-sheet integration
+└── cairn.pen                    Pencil UI design source
 ```
 
 ## Common commands
@@ -85,8 +106,8 @@ All run from `memory/` unless noted.
 
 ```bash
 pnpm dev                          # Next.js dev server (no Tauri shell)
-pnpm typecheck                    # tsc --noEmit
-pnpm lint                         # next lint + eslint
+pnpm exec tsc --noEmit            # typecheck
+pnpm lint                         # next lint
 pnpm build                        # static export → memory/out/
 ```
 
@@ -144,6 +165,32 @@ After restarting your MCP host:
 2. Ask the host "What does the user prefer for coffee?" — it should call `search_memory` and answer.
 3. Open `/audit` and run **Verify chain** to see the access logged, hashed, and signed.
 
+## Local REST API (port 7716)
+
+An always-on localhost HTTP server (`src-tauri/src/api_server.rs`) boots with
+the app. The browser extension depends on it; any other local tool can use it
+too.
+
+- Bind: `127.0.0.1:7716` by default; override with `CAIRN_API_PORT`. If the
+  port is busy the server tries the next 4 ports.
+- Auth: optional. Set `CAIRN_API_TOKEN` to require
+  `Authorization: Bearer <token>` on every request; `/api/status` stays open
+  so clients can fail soft. Unset = open to localhost.
+- Endpoints: `GET /api/status` · `POST /api/capture` · `GET /api/search` ·
+  `GET /api/recent` · `GET /api/themes`.
+- The live `{host, port, token?}` is written to `<data_dir>/api_endpoint.json`
+  on every successful bind.
+
+## MCP over SSE (port 7717)
+
+Two ways to expose the MCP server over HTTP/SSE instead of stdio:
+
+- **In-app bridge** — toggle in **Settings**; the GUI runs an SSE server on
+  `127.0.0.1:7717` in-process (shares the GUI's DB handle — no second SQLite
+  connection to race with).
+- **Standalone** — `cairn-mcp --transport sse --port 7717 [--host 127.0.0.1]`
+  (the default transport remains stdio).
+
 ## Commit conventions
 
 Conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, `perf:`).
@@ -151,16 +198,32 @@ Conventional commits (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, 
 - Keep commits small and atomic.
 - Reference an issue (`Closes #123`) when relevant.
 - Don't commit `.env`, `node_modules/`, `target/`, `.next/`, `out/` — `.gitignore` should already catch them.
-- Pencil design changes (`untitled.pen`) are binary but small enough to track directly; large design assets will move to git-lfs when needed.
+- Pencil design changes (`cairn.pen`) are binary but small enough to track directly; large design assets will move to git-lfs when needed.
 
 ## CI
 
-GitHub Actions in `.github/workflows/ci.yml` runs on every push and PR:
+GitHub Actions in `.github/workflows/ci.yml` runs on pushes to `main`, PRs
+targeting `main`, and manual `workflow_dispatch`. Three jobs:
 
-- `frontend` job — `pnpm install` → `pnpm typecheck` → `pnpm lint`
-- `rust` job — installs Tauri system deps → `cargo fmt --check` → `cargo check` → `cargo clippy` → `cargo test`
+- `migrations-immutable` job — for every file under
+  `memory/src-tauri/migrations/` at the highest-versioned `v*` tag, asserts
+  HEAD still has the same blob at the same path. Modified, deleted, renamed,
+  and delete-then-re-add all fail the gate; newly added migrations pass.
+- `frontend` job — `pnpm install --frozen-lockfile` → `pnpm exec tsc --noEmit` → `pnpm lint`
+- `rust` job — installs Tauri system deps → stubs the frontend dist
+  (`memory/out/`, so tauri-build's `frontendDist` check passes without a
+  Next.js build) → `cargo fmt --check` → `cargo check --locked` →
+  `cargo clippy --locked` → `cargo test --locked` → stages the previous
+  release tag's migrations dir and runs `cargo test --locked --test upgrade`
+  with `CAIRN_UPGRADE_OLD_MIGRATIONS_DIR` pointing at it (upgrade smoke test;
+  self-skips when no `v*` tag exists yet).
 
-Tauri full builds are intentionally **not** in CI (too slow for every PR). Release builds happen on tagged commits via a separate workflow (TODO).
+Tauri full builds are intentionally **not** in CI (too slow for every PR).
+Release builds run in `.github/workflows/release.yml`, triggered by tags
+matching `v*.*.*` (or manual `workflow_dispatch` with a tag input). It builds
+a matrix of **macos-arm64 / linux-x64 / windows-x64** bundles plus a separate
+**chrome-extension** zip job, then publishes a GitHub Release; any tag
+containing `-` (e.g. `v0.1.0-alpha.3`) is automatically marked pre-release.
 
 ## Adding a new module
 
@@ -168,16 +231,23 @@ When you add a new module under `src-tauri/src/`:
 
 1. Mirror domain types in `src/lib/types.ts` (UI side).
 2. If the module is callable from UI, expose an IPC command in `commands.rs`.
-3. If the module touches memory entries, write the corresponding audit chain entry (`audit::record(...)`) — **no exceptions**.
-4. Add unit tests in the module file (Rust convention) or `#[cfg(test)] mod tests`.
-5. Update [ARCHITECTURE.md](./ARCHITECTURE.md) module table.
+3. If the module surfaces UI copy, add the strings to **both**
+   `src/lib/i18n` dictionaries (`en.json` + `zh-CN.json`) — no hard-coded
+   user-facing text.
+4. If the module touches memory entries, write the corresponding audit chain entry (`AuditLogger::log(...)`) — **no exceptions**.
+5. Add unit tests in the module file (Rust convention) or `#[cfg(test)] mod tests`.
+6. Update [ARCHITECTURE.md](./ARCHITECTURE.md) module table.
 
 ## Database migrations
 
 ```bash
 # from memory/src-tauri/
-sqlx migrate add -r <slug>        # creates migrations/NNNN_<slug>.up.sql + .down.sql
+sqlx migrate add <slug>           # creates migrations/<timestamp>_<slug>.sql
 ```
+
+This repo uses **irreversible single-file migrations** only
+(`migrations/<timestamp>_<slug>.sql`). Don't pass `-r` — sqlx refuses to mix
+reversible and irreversible migrations in one directory.
 
 Migrations run automatically on app start.
 
@@ -196,7 +266,7 @@ Migrations run automatically on app start.
 >   (`Nextagent → Cairn`) hit this trap and forced every v0.1.0-alpha.1
 >   user to wipe their DB.
 > - If you must change the schema, **write a new migration** —
->   `sqlx migrate add -r <slug>` — that idempotently brings old DBs to
+>   `sqlx migrate add <slug>` — that idempotently brings old DBs to
 >   the new state.
 
 ### Automated guardrails
@@ -251,13 +321,6 @@ mistake.
 >   can both apply migrations concurrently. SQLite file locking + sqlx's
 >   per-migration transactions usually serialise the writes, but the
 >   safer fix is a single-instance lock plugin — tracked separately.
-
-## Common pitfalls
-
-- **`cargo build` hangs on first run** — Tauri bundles a lot. Expect 5-10 minutes the first time; subsequent builds use the cache.
-- **macOS Accessibility permission** — selection popover and global hotkey need it. System Settings → Privacy & Security → Accessibility → enable Cairn.
-- **MCP host doesn't see `cairn`** — restart the host process after editing its config; the config is only read at startup.
-- **`.env` not loaded** — make sure it's at `memory/.env`, not the repo root, and that you ran `pnpm tauri:dev` rather than `cargo run` directly.
 
 ## Common pitfalls
 

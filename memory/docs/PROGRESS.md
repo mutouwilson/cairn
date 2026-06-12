@@ -11,6 +11,46 @@ covered by a test or an explicit `untested` note.
 
 ---
 
+## Catch-up entry (2026-06-12) — the alpha.1 → alpha.3 window
+
+Everything below this entry was written on 2026-05-13; this entry compresses
+the four weeks since. Day-to-day changes are recorded in the root
+`CHANGELOG.md` from here on — this file stays the per-phase narrative.
+
+**Shipped since 2026-05-13**
+
+- **Phase 6b · In-app MCP SSE bridge** — Settings toggle boots an in-process
+  SSE server on `127.0.0.1:7717` (`mcp_bridge.rs`); shares the GUI's DB
+  handle. Standalone `cairn-mcp --transport sse` kept for headless use.
+- **Phase 6d · Provider settings page** — 10 provider families (Vercel
+  Gateway, OpenRouter, OpenAI, Anthropic, Gemini, Doubao, Minimax, Moonshot,
+  GLM, Qwen) configurable in-app, hot-reloaded without restart.
+- **Local REST API server** — always-on `127.0.0.1:7716` (`CAIRN_API_PORT`;
+  optional `CAIRN_API_TOKEN` bearer auth); endpoints status / capture /
+  search / recent / themes; the browser extension's backend.
+- **i18n** — full `en` + `zh-CN` dictionaries under `src/lib/i18n`.
+- **Phase 7 · V6 dev-tool memory import/export** — CLAUDE.md / Cursor /
+  Codex import, managed-block export, file watcher, skip + unlinked-doc
+  handling.
+- **Browser extension completed** (5e was a scaffold) — 12+ supported sites,
+  passive recall, IME fixes; distributed as a load-unpacked zip with each
+  GitHub Release.
+- **Release + CI infrastructure** — v0.1.0-alpha.1 → alpha.3 shipped;
+  `release.yml` builds macos-arm64 / linux-x64 / windows-x64 bundles + the
+  extension zip; `ci.yml` runs migrations-immutable / frontend / rust jobs.
+- **Relicensed** to FSL-1.1-ALv2.
+- **Migration guardrails** — immutable-migrations CI gate, pre-migration
+  runtime backups, prev-release upgrade smoke test
+  (`cargo test --test upgrade` via `CAIRN_UPGRADE_OLD_MIGRATIONS_DIR`).
+- **Consolidation fixes (×3)** — CJK boundary panic, supersede deadlock,
+  worker hot-reconfiguration.
+
+**Verification snapshot (2026-06-12)** — `pnpm build` ✓ **12 static routes** ·
+MCP `tools/list` **5 tools** · **16 migrations** in
+`memory/src-tauri/migrations/`.
+
+---
+
 ## Phase 1 — Foundation (2026-05-13 ✓)
 
 **Capability shipped:** capture → extract → store → query → MCP → audit, end-to-end.
@@ -272,6 +312,10 @@ reads anything the user hasn't already highlighted.
 6. **/settings → "Poll now" manual trigger** so the user doesn't wait for the next tick after adding a source.
 7. **Carry-overs**: Verifiable Agent Cards, BBS+ selective disclosure, real-time CRDT (yrs + Iroh), runtime adapter eval harness.
 
+> Update (2026-06-12): item 2 is done — shipped as a split surface: the
+> always-on REST API on `127.0.0.1:7716` serves the extension, while
+> MCP-over-SSE lives separately on `7717`.
+
 ---
 
 ## Phase 4 — Make Cairn usable day-to-day (2026-05-13 ✓ 5 of 6 shipped)
@@ -371,7 +415,7 @@ Touched in a single commit pass (cleanly, with verification):
 - Tauri: `productName: "Cairn"`, `identifier: so.cairn.app`, window title.
 - MCP `serverInfo.name`: `cairn`. `instructions` rewritten with brand voice.
 - ProjectDirs → `~/Library/Application Support/Cairn/` (Linux `~/.local/share/Cairn`, Windows `%APPDATA%\Cairn`). Existing DB migrated by copy.
-- Env vars: all `CAIRN_*` → `CAIRN_*` across Rust + `.env`. `AI_GATEWAY_API_KEY` unchanged (Vercel-owned).
+- Env vars: all `NEXTAGENT_*` → `CAIRN_*` across Rust + `.env`. `AI_GATEWAY_API_KEY` unchanged (Vercel-owned).
 - UI: title + header + metadata switched. `/themes` etc. unchanged.
 - Icons: regenerated as a stacked-stones glyph (Cairn semantic) at 32/64/128/256/512/1024 + `.icns` (via `iconutil`) + multi-size `.ico`.
 - Docs: `README.md`, `docs/{ARCHITECTURE,SETUP,MCP_INTEGRATION,ROADMAP,PROGRESS}.md`, `tools/distill/README.md` — sed-renamed, manually proof-skimmed.
@@ -385,7 +429,7 @@ Touched in a single commit pass (cleanly, with verification):
 - Dev launch under new name ✓ — log shows `cairn v0.1.0`, sqlite-vec, gateway extraction + embedding ready, consolidation worker spawned, `cairn_lib::*` log targets.
 - MCP smoke with exact Claude Desktop env block ✓ — `initialize` returns `{name: 'cairn', version: '0.1.0'}`; `tools/list` returns all 5 tools.
 
-Followed-up: no leftover string `cairn-memory|cairn_memory_lib|Cairn Memory|CAIRN_|ai.cairn.memory` anywhere in source / config / docs.
+Followed-up: no leftover string `nextagent-memory|nextagent_memory_lib|Nextagent Memory|NEXTAGENT_|ai.nextagent.memory` anywhere in source / config / docs.
 
 ---
 

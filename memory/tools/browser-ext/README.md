@@ -20,7 +20,7 @@ extension is the bridge. It does two things:
 Plus a right-click "Save selection to Cairn" / "Save this page" menu that
 works on any page (not just chats).
 
-Everything talks to your local Cairn at `http://127.0.0.1:7717`. Nothing
+Everything talks to your local Cairn at `http://127.0.0.1:7716`. Nothing
 leaves your machine.
 
 ## Sites with explicit support
@@ -57,14 +57,14 @@ That produces `dist/`. Then in your Chromium browser:
 4. Choose the `tools/browser-ext/dist/` folder
 
 The Cairn icon appears in the toolbar; open it once to verify the connection
-to `http://127.0.0.1:7717` is green. If it isn't, open Cairn → **Settings →
+to `http://127.0.0.1:7716` is green. If it isn't, open Cairn → **Settings →
 Remote MCP bridge** and enable it.
 
 ## Configure
 
 Right-click the toolbar icon → **Options** to change:
 
-- **Cairn URL** — default `http://127.0.0.1:7717`. Change if you run Cairn on
+- **Cairn URL** — default `http://127.0.0.1:7716`. Change if you run Cairn on
   a different port or you've tunneled it.
 - **Slash prefix** — defaults to `@cairn`.
 - **Inject as prefix** — when on, results from your search become a
@@ -131,7 +131,7 @@ in the controller keeps re-decorating after every re-render.
 
 ## Security model
 
-The extension only talks to `127.0.0.1:7717` by default. The Cairn local API
+The extension only talks to `127.0.0.1:7716` by default. The Cairn local API
 itself has **no authentication** (the host being `localhost` is the
 boundary). Don't tunnel it publicly unless you also add auth — that's a
 separate hardening task tracked in the main repo.

@@ -1,21 +1,31 @@
 # Setup
 
+> Just want to *use* Cairn? Grab a prebuilt installer (DMG / MSI / AppImage +
+> the Chrome extension zip) from
+> [Releases](https://github.com/mutouwilson/cairn/releases). Everything below
+> is the **build-from-source / development** path.
+
 ## Prerequisites
 
 - macOS 13+ (Linux / Windows also work; instructions below are macOS-focused)
 - **Node.js 20+** and **pnpm 9+**
 - **Rust 1.77+** (`rustup install stable`)
 - **Tauri 2 system deps**: see the [official guide](https://v2.tauri.app/start/prerequisites/). On macOS that's just Xcode CLI tools.
-- Anthropic API key for Phase 1 extraction
+- Optional: an API key for any supported AI provider — configured **in-app**
+  after first launch (Settings → AI providers; 10 families: Vercel Gateway,
+  OpenRouter, OpenAI, Anthropic, Gemini, 豆包, Minimax, Kimi, GLM, 通义).
+  Without one Cairn runs in BM25-only logbook mode.
 
 ## First-time install
 
 ```bash
 cd memory
 pnpm install
-cp .env.example .env
-# edit .env, paste ANTHROPIC_API_KEY=sk-ant-...
 ```
+
+AI providers are configured in the app (Settings → AI providers) — no env
+vars required. `cp .env.example .env` + `AI_GATEWAY_API_KEY=…` still works as
+a fallback for headless/dev runs, but the Settings page is the primary path.
 
 ## Run in dev
 
@@ -51,7 +61,16 @@ CAIRN_DATA_DIR=/path/to/dir pnpm tauri:dev
 cargo run --bin cairn-mcp --release --manifest-path src-tauri/Cargo.toml
 ```
 
-This is what Claude Desktop / Cursor launch as a subprocess. See [MCP_INTEGRATION.md](./MCP_INTEGRATION.md) for the config snippet.
+This is what Claude Desktop / Cursor launch as a subprocess. See [MCP_INTEGRATION.md](./MCP_INTEGRATION.md) for the config snippet. It also supports `--transport sse --port 7717` for a standalone read-only SSE server.
+
+## Local port topology
+
+| Port | What | Lifecycle |
+|---|---|---|
+| `127.0.0.1:7716` | REST API (`/api/status\|capture\|search\|recent\|themes`) — used by the browser extension and third-party callers | Always on while the GUI runs; auto-bumps up to 4 ports if taken; `CAIRN_API_PORT` overrides |
+| `127.0.0.1:7717` | MCP SSE bridge (`/sse`) — for remote MCP clients (ChatGPT connectors via tunnel) | Opt-in toggle in Settings |
+
+Set `CAIRN_API_TOKEN` before launch to require `Authorization: Bearer …` on `/api/*` (`/api/status` stays open); paste the same token into the browser extension's options.
 
 ## Tests
 
@@ -65,8 +84,9 @@ Covers:
 - Tampering with a stored row is detected on verify.
 - Schema validation rejects bad LLM outputs.
 - Ebbinghaus retention / reinforcement bounds.
-- BM25 score normalisation.
+- RRF fusion + recency scoring.
 - FTS query building.
+- Consolidation supersede chain + CJK-safe truncation.
 
 ## Production build
 
@@ -74,7 +94,7 @@ Covers:
 pnpm tauri:build
 ```
 
-Produces a signed `.dmg` (macOS), `.msi` (Windows), or `.AppImage` (Linux) in `src-tauri/target/release/bundle/`.
+Produces an ad-hoc-signed `.dmg` (macOS — not notarized; first launch may need `xattr -dr com.apple.quarantine`), `.msi` (Windows), or `.AppImage` (Linux) in `src-tauri/target/release/bundle/`.
 
 ## Encrypted at-rest storage (opt-in, Phase 3b)
 
@@ -127,7 +147,7 @@ migration — open the app once with CAIRN_ENCRYPT=1 and it rebuilds them via
 
 ## Common issues
 
-- **`ANTHROPIC_API_KEY not set`** — extraction silently no-ops. Add to `.env`.
-- **`sqlx::migrate!` error** — wipe `memory.db` and re-launch.
+- **Extraction doesn't run / notes stay raw** — no extract provider configured. Open Settings → AI providers and set one (any of the 10 families); env vars are only a fallback.
+- **Migration checksum conflict on launch** — Cairn shows a native dialog and has already kept a pre-migration backup under `…/Cairn/backups/`. Install a matching/newer version first; wiping `memory.db` is the last resort.
 - **MCP server starts but Claude Desktop doesn't see tools** — quit + relaunch Claude Desktop. It only scans the config at startup.
 - **Permission denied on SQLite** — another process has the DB open with an exclusive lock. WAL mode normally avoids this but some tools (DB Browser for SQLite) still grab exclusive.

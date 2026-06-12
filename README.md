@@ -24,7 +24,7 @@ Write a note. Cairn's AI structures it into typed **entities, relations, and the
 
 - 🔒 **Local-first & private** — a single SQLite file on *your* machine. No cloud, no account.
 - 🔗 **One memory, every agent** — shared over MCP, plus a browser extension that works across 10+ AI chat sites (ChatGPT, Claude, Gemini, DeepSeek, Kimi, 豆包…).
-- 🧾 **Verify, don't trust** — Merkle + Ed25519 audit chain; every access is provable, offline.
+- 🧾 **Verify, don't trust** — SHA-256 hash chain + Ed25519 signatures; every access is provable, offline.
 
 **[⬇ Download for macOS / Windows / Linux »](https://github.com/mutouwilson/cairn/releases)**  ·  or [build from source](#quick-start)
 
@@ -37,18 +37,18 @@ Write a note. Cairn's AI structures it into typed **entities, relations, and the
 |---|---|
 | Locked to one model (Mem.ai → OpenAI, Anthropic Memory → Claude) | **Protocol-neutral** via MCP — any MCP-capable agent |
 | Flat key-value store | **Typed, structured** (8 entity types) + relations + Ebbinghaus decay |
-| "Trust us" on privacy | **Cryptographic audit log** — Merkle chain + Ed25519, verify-don't-trust |
+| "Trust us" on privacy | **Cryptographic audit log** — hash chain + Ed25519, verify-don't-trust |
 | Schema-free text | **Schema-constrained extraction** via `tool_use` + JSON-Schema validation |
 | API call per note | Phase 2: **on-device 1.5 B model** — free, instant, offline |
 
 ## Features
 
-- **Local-first** — single SQLite file under `~/Library/Application Support/cairn/`. Nothing leaves the device unless you grant access.
-- **MCP-native** — `cairn-mcp` standalone binary speaks JSON-RPC 2.0 over stdio; drop it into Claude Desktop / Cursor in 30 seconds.
+- **Local-first** — single SQLite file under `~/Library/Application Support/Cairn/`. Nothing leaves the device unless you grant access.
+- **MCP-native** — `cairn-mcp` speaks JSON-RPC 2.0 over stdio, or serve MCP over SSE (`127.0.0.1:7717`) straight from the app; drop it into Claude Desktop / Cursor in 30 seconds.
 - **Per-agent × per-entity-type permission matrix** — grant Claude read on `Preference` but not `Finance`, in one click.
-- **Merkle-chained audit log** — every read, write, extract and grant is hashed and Ed25519-signed. `cairn verify-chain` walks the whole history offline.
-- **Hybrid retrieval** — SQLite FTS5 BM25 + entity-type filter + importance reinforcement + Ebbinghaus recency decay, re-ranked.
-- **Multi-surface capture** — manual note, ⌥-Space hotkey, selection popover, IMAP, iCal subscription.
+- **Hash-chained audit log** — every read, write, extract and grant is hashed and Ed25519-signed; verify it offline from the Audit page.
+- **Hybrid retrieval** — FTS5 BM25 + sqlite-vec kNN fused via RRF, re-ranked by importance + Ebbinghaus recency + manual-edit trust boost.
+- **Multi-surface capture** — manual note, ⌘⇧M hotkey, selection popover, IMAP, iCal subscription.
 - **Three binaries, one crate** — `cairn` (GUI), `cairn-mcp` (MCP server), `cairn-migrate` (encrypted DB migration).
 - **Optional at-rest encryption** — `--features encrypted` builds a vendored SQLCipher; key in your OS keychain.
 
@@ -58,8 +58,9 @@ Write a note. Cairn's AI structures it into typed **entities, relations, and the
 git clone https://github.com/mutouwilson/cairn.git
 cd cairn/memory
 pnpm install
-cp .env.example .env          # add AI_GATEWAY_API_KEY or ANTHROPIC_API_KEY
 pnpm tauri:dev                # Tauri shell with Next.js hot-reload
+# AI provider: configure in-app via Settings → AI providers (10 families);
+# `cp .env.example .env` + AI_GATEWAY_API_KEY works as a headless fallback.
 ```
 
 The first `cargo build` pulls a lot — give it 5–10 minutes; subsequent builds are incremental.
@@ -91,13 +92,14 @@ Brings your memory into the AI chat sites you already use: as you type, relevant
 ```
        Next.js 15 UI  ←─Tauri IPC─→  Rust core (cairn_lib)
                                        │
-                                       ├─ capture / extract / embed
-                                       ├─ retrieval (BM25 + importance)
-                                       ├─ audit  (Merkle + Ed25519)
-                                       └─ mcp    (stdio JSON-RPC)
+                                       ├─ capture / extract / embed / import
+                                       ├─ retrieval (BM25 + vector, RRF-fused)
+                                       ├─ audit  (hash chain + Ed25519)
+                                       ├─ mcp    (stdio · SSE :7717)
+                                       └─ REST   (/api/* :7716)
                                             │
                                             ▼
-                                  Claude Desktop · Cursor · Codex …
+                       Claude Desktop · Cursor · Codex · browser extension …
 ```
 
 Full module map and design decisions in [ARCHITECTURE.md](./ARCHITECTURE.md).
@@ -126,7 +128,7 @@ Full module map and design decisions in [ARCHITECTURE.md](./ARCHITECTURE.md).
 | Capture (manual, hotkey, selection, IMAP, iCal) | ✅ shipping |
 | Schema-constrained extraction (Anthropic API + Gateway) | ✅ shipping |
 | MCP stdio server + permission matrix | ✅ shipping |
-| Audit chain (Merkle + Ed25519) | ✅ shipping |
+| Audit chain (hash chain + Ed25519) | ✅ shipping |
 | Hybrid retrieval (FTS5 + importance + recency) | ✅ shipping |
 | Optional encrypted SQLite (SQLCipher) | 🧪 experimental |
 | **On-device extraction (Qwen 2.5-1.5B)** | 🚧 in progress |

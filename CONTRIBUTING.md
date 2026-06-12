@@ -42,13 +42,13 @@ Sections marked **(post-public)** describe the full contributor flow as it stabi
    ```bash
    cd memory
    pnpm install
-   pnpm typecheck && pnpm lint
+   pnpm exec tsc --noEmit && pnpm lint
    ( cd src-tauri && cargo fmt --check && cargo clippy --all-targets && cargo test )
    ```
 3. Follow **Conventional Commits** for commit messages (`feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`, `perf:`). A pre-commit hook (husky + commitlint) will enforce this.
 4. Update [ARCHITECTURE.md](./ARCHITECTURE.md) and inline doc-comments if you change a module's responsibilities.
 5. If you touch the database, add an `sqlx migrate` file — don't edit existing migrations.
-6. **Audit chain rule**: every code path that reads or writes user memory MUST record an `audit::record(...)` entry. No exceptions.
+6. **Audit chain rule**: every code path that reads or writes user memory MUST record an `AuditLogger::log(...)` entry. No exceptions.
 7. Open the PR using the template; link the issue with `Closes #N`.
 
 ## Code style
@@ -70,7 +70,7 @@ Sections marked **(post-public)** describe the full contributor flow as it stabi
 
 ## Licensing of contributions
 
-By submitting a PR you agree your contribution is licensed under the [Apache 2.0 license](./LICENSE) that covers the rest of the repo. No CLA required.
+By submitting a PR you agree your contribution is licensed under the same [FSL-1.1-ALv2 license](./LICENSE) that covers the rest of the repo (inbound = outbound; each release converts to Apache-2.0 two years after publication). No CLA required.
 
 ## Code of conduct
 

@@ -8,7 +8,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
-- Initial repo import: Tauri 2 + Next.js 15 + Rust core with audit chain (Merkle + Ed25519), MCP stdio server, permission matrix, Ebbinghaus-aware retrieval.
+- Initial repo import: Tauri 2 + Next.js 15 + Rust core with audit chain (SHA-256 hash chain + Ed25519), MCP stdio server, permission matrix, Ebbinghaus-aware retrieval.
 - `ARCHITECTURE.md` and `DEVELOPMENT.md` covering system design and contributor setup.
 - GitHub Actions CI: frontend `typecheck + lint`, rust `fmt + clippy + check + test`.
 - Apache-2.0 LICENSE, CONTRIBUTING.md, CODE_OF_CONDUCT.md, SECURITY.md.
