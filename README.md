@@ -7,7 +7,6 @@
 *Local-first · cryptographically auditable · works with Claude, Cursor, ChatGPT & any MCP agent.*
 
 [![CI](https://github.com/mutouwilson/cairn/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mutouwilson/cairn/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/mutouwilson/cairn/branch/main/graph/badge.svg)](https://codecov.io/gh/mutouwilson/cairn)
 [![License: FSL-1.1-ALv2](https://img.shields.io/badge/license-FSL--1.1--ALv2-blue.svg)](./LICENSE)
 [![Status: alpha](https://img.shields.io/badge/status-alpha-orange.svg)](#status)
 [![Latest release](https://img.shields.io/github/v/release/mutouwilson/cairn?include_prereleases&sort=semver&label=download)](https://github.com/mutouwilson/cairn/releases)
