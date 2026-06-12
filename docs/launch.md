@@ -6,10 +6,8 @@ Stars are a result, not the goal — don't buy or swap them.
 
 ## Pre-flight checklist
 
-- [ ] Record `docs/demo.gif` (storyboard below) and swap it into the README hero
-      (replace the `<!-- demo gif goes here -->` comment with
-      `![Cairn in action](./docs/demo.gif)`). **This is the single
-      highest-leverage asset — do it before posting anywhere.**
+- [x] Record `docs/demo.gif` (storyboard below) and swap it into the README hero
+      — done 2026-06-12 (9.9 MB, 1445×930).
 - [ ] Pick a launch day: **Tue–Thu, ~8–10am US Pacific**.
 - [ ] Be free for ~3 hours after posting to reply to *every* comment. Engagement
       in the first hour decides whether HN/Reddit ranks you.
