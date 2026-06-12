@@ -6,6 +6,10 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-06-12
+
+First public release on this repository (supersedes the retired alpha pre-releases).
+
 ### Added
 
 - Initial repo import: Tauri 2 + Next.js 15 + Rust core with audit chain (SHA-256 hash chain + Ed25519), MCP stdio server, permission matrix, Ebbinghaus-aware retrieval.
@@ -28,4 +32,5 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 - Strategy / research / competitive-analysis notes moved out of this repo into a separate private archive.
 
-[Unreleased]: https://github.com/mutouwilson/cairn/commits/main
+[Unreleased]: https://github.com/mutouwilson/cairn/compare/v0.1.0...main
+[0.1.0]: https://github.com/mutouwilson/cairn/releases/tag/v0.1.0
