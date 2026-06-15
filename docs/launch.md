@@ -15,6 +15,13 @@ Stars are a result, not the goal — don't buy or swap them.
       in the first hour decides whether HN/Reddit ranks you.
 - [ ] Make sure the Releases page is clean (latest alpha pinned, clear install
       notes for the unsigned `.app` / `.msi` / `.AppImage`).
+- [ ] **After flipping the repo public:** open the README in a logged-out /
+      incognito window and confirm the hero video actually plays. The
+      `user-attachments` asset was uploaded while the repo was private, so it
+      404s anonymously until publication; GitHub *should* make it public along
+      with the repo, but verify. If it stays broken, re-drag `docs/demo.mp4`
+      into an issue on the now-public repo and swap the new URL into the README
+      (the mp4 is committed as a fallback).
 
 ## demo storyboard (8–12s silent loop)
 
