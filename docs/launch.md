@@ -6,15 +6,17 @@ Stars are a result, not the goal — don't buy or swap them.
 
 ## Pre-flight checklist
 
-- [x] Record `docs/demo.gif` (storyboard below) and swap it into the README hero
-      — done 2026-06-12 (9.9 MB, 1445×930).
+- [x] Record the demo (storyboard below) and swap it into the README hero
+      — done. Now an H.264 `docs/demo.mp4` (≈3 MB, 1444×930), embedded via a
+      GitHub user-attachments video URL so it plays inline. The macOS username
+      is redacted from the import-page file paths.
 - [ ] Pick a launch day: **Tue–Thu, ~8–10am US Pacific**.
 - [ ] Be free for ~3 hours after posting to reply to *every* comment. Engagement
       in the first hour decides whether HN/Reddit ranks you.
 - [ ] Make sure the Releases page is clean (latest alpha pinned, clear install
       notes for the unsigned `.app` / `.msi` / `.AppImage`).
 
-## demo.gif storyboard (8–12s silent loop)
+## demo storyboard (8–12s silent loop)
 
 1. **(0–2s)** Type in the ChatGPT composer → the Cairn pill appears: *"2 matches"*.
 2. **(2–4s)** Press Enter → the memories drop in as a `<context>` block above the prompt.
@@ -22,7 +24,8 @@ Stars are a result, not the goal — don't buy or swap them.
    entities + relations.
 4. **(7–10s)** Audit view → the signed chain, rows lighting up *"verified"*.
 
-Keep it silent, add short captions, target < 4 MB so GitHub inlines it.
+Keep it silent, add short captions. Delivered as an inline MP4 (H.264) via a
+GitHub user-attachments URL — free-repo videos must stay under 10 MB.
 
 ---
 

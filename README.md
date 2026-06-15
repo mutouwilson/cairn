@@ -17,7 +17,12 @@
 
 </div>
 
-![Cairn in action — passive recall in ChatGPT, structured entities, signed audit chain](./docs/demo.gif)
+<p align="center">
+  <video src="https://github.com/user-attachments/assets/a2ada0ab-b48f-4e36-b208-9af30907e968" controls autoplay loop muted playsinline width="860">
+    Cairn in action — passive recall in ChatGPT, structured entities, signed audit chain.
+    <a href="https://github.com/user-attachments/assets/a2ada0ab-b48f-4e36-b208-9af30907e968">Watch the demo »</a>
+  </video>
+</p>
 
 Write a note. Cairn's AI structures it into typed **entities, relations, and themes**. Any MCP-capable agent — Claude Desktop, Cursor, Codex, Cline — then reads exactly what you authorize. Every read and write is **signed and hashed into a tamper-evident chain**, so you can prove your memory wasn't touched behind your back.
 
