@@ -15,13 +15,15 @@ Stars are a result, not the goal — don't buy or swap them.
       in the first hour decides whether HN/Reddit ranks you.
 - [ ] Make sure the Releases page is clean (latest alpha pinned, clear install
       notes for the unsigned `.app` / `.msi` / `.AppImage`).
-- [ ] **After flipping the repo public:** open the README in a logged-out /
-      incognito window and confirm the hero video actually plays. The
-      `user-attachments` asset was uploaded while the repo was private, so it
-      404s anonymously until publication; GitHub *should* make it public along
-      with the repo, but verify. If it stays broken, re-drag `docs/demo.mp4`
-      into an issue on the now-public repo and swap the new URL into the README
-      (the mp4 is committed as a fallback).
+- [x] **Hero video plays for logged-out visitors** — verified in an incognito
+      window. Gotcha learned: a `user-attachments` asset only becomes public
+      once it's referenced in *published* content. Uploading it to an unsubmitted
+      issue draft (even on a public repo) leaves it auth-gated (anonymous 404).
+      Fix used: reference the asset from a submitted issue, then point the
+      README `<video>` at its `github.com/user-attachments/...` URL. Non-github
+      hosts (jsDelivr, raw, release assets) don't work — GitHub's README
+      sanitizer strips `<video>` whose `src` isn't a github asset. `docs/demo.mp4`
+      stays committed as the source/fallback.
 
 ## demo storyboard (8–12s silent loop)
 
