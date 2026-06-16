@@ -18,9 +18,9 @@
 </div>
 
 <p align="center">
-  <video src="https://cdn.jsdelivr.net/gh/mutouwilson/cairn@main/docs/demo.mp4" controls autoplay loop muted playsinline width="860">
+  <video src="https://github.com/user-attachments/assets/e23e45be-bcc1-4415-b77d-facdd2698169" controls autoplay loop muted playsinline width="860">
     Cairn in action — passive recall in ChatGPT, structured entities, signed audit chain.
-    <a href="https://cdn.jsdelivr.net/gh/mutouwilson/cairn@main/docs/demo.mp4">Watch the demo »</a>
+    <a href="https://github.com/user-attachments/assets/e23e45be-bcc1-4415-b77d-facdd2698169">Watch the demo »</a>
   </video>
 </p>
 
