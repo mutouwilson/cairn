@@ -223,7 +223,7 @@ async fn search(
     let mut notes_out: Vec<Value> = res
         .notes
         .iter()
-        .map(|n| serde_json::to_value(n).unwrap_or_else(|_| json!(null)))
+        .map(|n| serde_json::to_value(n).unwrap_or(json!(null)))
         .collect();
     let existing_ids: std::collections::HashSet<&str> =
         res.notes.iter().map(|n| n.note.id.as_str()).collect();

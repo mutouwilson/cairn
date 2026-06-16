@@ -219,6 +219,31 @@ async fn upsert_semantic(
     Ok(created)
 }
 
+async fn finish_run(
+    db: &Db,
+    run_id: &str,
+    stats: &ConsolidationStats,
+    error: Option<&str>,
+    status: &str,
+) -> Result<()> {
+    sqlx::query(
+        "UPDATE consolidation_runs SET \
+           finished_at = ?, topics_scanned = ?, semantic_created = ?, semantic_updated = ?, \
+           error = ?, status = ? \
+         WHERE id = ?",
+    )
+    .bind(now_ms())
+    .bind(stats.topics_scanned)
+    .bind(stats.semantic_created)
+    .bind(stats.semantic_updated)
+    .bind(error)
+    .bind(status)
+    .bind(run_id)
+    .execute(db.pool())
+    .await?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -283,29 +308,4 @@ mod tests {
         let short = value_brief(&Value::String("短值".into()));
         assert_eq!(short, "\"短值\"");
     }
-}
-
-async fn finish_run(
-    db: &Db,
-    run_id: &str,
-    stats: &ConsolidationStats,
-    error: Option<&str>,
-    status: &str,
-) -> Result<()> {
-    sqlx::query(
-        "UPDATE consolidation_runs SET \
-           finished_at = ?, topics_scanned = ?, semantic_created = ?, semantic_updated = ?, \
-           error = ?, status = ? \
-         WHERE id = ?",
-    )
-    .bind(now_ms())
-    .bind(stats.topics_scanned)
-    .bind(stats.semantic_created)
-    .bind(stats.semantic_updated)
-    .bind(error)
-    .bind(status)
-    .bind(run_id)
-    .execute(db.pool())
-    .await?;
-    Ok(())
 }

@@ -36,9 +36,9 @@ pub fn spawn_worker(db: Db, providers: Arc<LiveProviders>, env: Option<Consolida
         ticker.tick().await;
         loop {
             ticker.tick().await;
-            let resolved = providers
-                .consolidation_config()
-                .and_then(|cfg| live_client.clone().map(|c| (c, cfg)))
+            let resolved = live_client
+                .clone()
+                .zip(providers.consolidation_config())
                 .or_else(|| env.clone().map(|s| (s.client, s.cfg)));
             match resolved {
                 None => {
