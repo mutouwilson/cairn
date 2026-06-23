@@ -5,8 +5,8 @@
 // passing `inspector={…}` into AppShell (none do yet).
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { cn, relativeTime } from "@/lib/utils";
 import { useT } from "@/lib/i18n";
 import { InspectorRow, SectionEyebrow, StatusPill } from "@/components/ui";
@@ -152,13 +152,48 @@ function AppBar() {
 
 function SearchBox() {
   const t = useT();
+  const router = useRouter();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [q, setQ] = useState("");
+
+  // ⌘K / Ctrl+K focuses the search from anywhere; Esc gives focus back to the page.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        inputRef.current?.focus();
+        inputRef.current?.select();
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
+  function submit() {
+    const query = q.trim();
+    if (!query) return;
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+  }
+
   return (
     <div className="relative">
       <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-400">
         <Icon d="M10 17a7 7 0 1 1 4.95-2.05L20 20" className="h-3.5 w-3.5" />
       </span>
       <input
+        ref={inputRef}
         type="search"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        onKeyDown={(e) => {
+          // IME-safe: don't submit on the Enter that commits a composition.
+          if (e.key === "Enter" && !e.nativeEvent.isComposing) {
+            e.preventDefault();
+            submit();
+          } else if (e.key === "Escape") {
+            e.currentTarget.blur();
+          }
+        }}
         placeholder={t("appbar.search_placeholder")}
         className="w-full h-8 pl-8 pr-12 rounded-md border border-ink-200 bg-ink-100/60 text-sm placeholder:text-ink-400 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/40 focus:bg-white"
       />

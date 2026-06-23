@@ -1,6 +1,7 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import {
   search,
   logRetrieval,
@@ -14,8 +15,22 @@ import { EntityTag, HashChip, Kbd, SectionEyebrow } from "@/components/ui";
 type Filter = "all" | "entities" | "notes";
 
 export default function SearchPage() {
+  return (
+    <Suspense
+      fallback={
+        <p className="max-w-3xl mx-auto px-8 py-10 text-sm text-ink-500">loading…</p>
+      }
+    >
+      <SearchPageInner />
+    </Suspense>
+  );
+}
+
+function SearchPageInner() {
   const t = useT();
-  const [query, setQuery] = useState("");
+  const params = useSearchParams();
+  const urlQ = params.get("q") ?? "";
+  const [query, setQuery] = useState(urlQ);
   const [filter, setFilter] = useState<Filter>("all");
   const [results, setResults] = useState<SearchPayload | null>(null);
   const [signalId, setSignalId] = useState<string | null>(null);
@@ -28,9 +43,17 @@ export default function SearchPage() {
     ref.current?.focus();
   }, []);
 
-  async function run() {
+  // Arriving from the top-bar search lands here as /search?q=…; run it, and
+  // re-run if the URL query changes while this page stays mounted.
+  useEffect(() => {
+    setQuery(urlQ);
+    if (urlQ.trim()) run(urlQ);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [urlQ]);
+
+  async function run(input: string = query) {
     if (busy) return;
-    const q = query.trim();
+    const q = input.trim();
     if (!q) {
       setResults(null);
       return;
@@ -106,7 +129,7 @@ export default function SearchPage() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === "Enter" && !e.nativeEvent.isComposing) {
                 e.preventDefault();
                 run();
               }
