@@ -118,7 +118,7 @@ rfd = "0.15"
 
 # Selection popover (Phase 6a) — macOS Accessibility + CGEventTap
 [target.'cfg(target_os = "macos")'.dependencies]
-accessibility-sys = "0.1"
+accessibility-sys = "0.2"
 core-foundation = "0.10"
 core-graphics = "0.24"
 objc2 = "0.5"
