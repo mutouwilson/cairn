@@ -78,7 +78,7 @@ directories = "5"
 dotenvy = "0.15"
 
 # json schema validation (for LLM output)
-jsonschema = "0.26"
+jsonschema = "0.46"
 
 # Phase 7 V6: import dev-tool memory files (YAML frontmatter parsing)
 serde_yaml = "0.9"
