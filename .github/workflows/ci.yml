@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0  # need tags + full history for the diff
 
@@ -91,7 +91,7 @@ jobs:
       run:
         working-directory: memory
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # pnpm version is sourced from the root package.json `packageManager`
       # field (Corepack-style). Don't pin `version:` here too — action-setup
@@ -121,7 +121,7 @@ jobs:
       run:
         working-directory: memory/src-tauri
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # Need tags + history so the upgrade smoke test below can extract
           # the previous release's migrations dir.
